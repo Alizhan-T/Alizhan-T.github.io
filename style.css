@@ -1,0 +1,132 @@
+/* ===== General Styles ===== */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+}
+
+/* ===== Navigation Bar ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 15px 30px;
+    color: #fff;
+}
+.header .nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+.header .nav a {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* ===== Card Row ===== */
+.cards {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+.card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    flex: 1;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* ===== Grid Layout ===== */
+.layout {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 10px;
+    padding: 20px;
+}
+.grid-header {
+    grid-area: header;
+    background: #444;
+    color: #fff;
+    padding: 10px;
+}
+.grid-sidebar {
+    grid-area: sidebar;
+    background: #ccc;
+    padding: 10px;
+    min-height: 500px;
+}
+.grid-main { grid-area: main; background: #eee; padding: 10px; }
+.grid-footer { grid-area: footer; background: #444; color: #fff; padding: 10px; }
+
+/* ===== Image Gallery ===== */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 20px;
+}
+.gallery img {
+    width: 100%;
+    border-radius: 5px;
+    transition: opacity 0.3s;
+}
+.gallery img:hover {
+    opacity: 0.7;
+}
+
+/* ===== Portfolio Page ===== */
+.portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #333;
+    color: #fff;
+    padding: 15px;
+}
+.portfolio-header ul {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+}
+.portfolio-header a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+.project-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.portfolio-info {
+    background: #eee;
+    padding: 15px;
+    border-radius: 8px;
+}
+.portfolio-footer {
+    background: #222;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
