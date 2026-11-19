@@ -2,14 +2,19 @@ export const contact = {
   github: "https://github.com/Alizhan-T",
   telegram: "https://t.me/alizhnn",
   linkedin: "https://www.linkedin.com/in/alizhkamn",
-  handle: "@alizhnn",
+  email: "" as string,
 };
-
+export const sections = [
+  { id: "hero", label: "Главная", code: "HERO", camera: "FRONT ¾" },
+  { id: "about", label: "Обо мне", code: "ABOUT", camera: "WHEEL DETAIL" },
+  { id: "projects", label: "Проекты", code: "PROJECTS", camera: "HIGH ANGLE" },
+  { id: "contact", label: "Контакты", code: "CONTACT", camera: "REAR ¾" },
+] as const;
 export const finishes = [
   {
     name: "Frozen Black",
     paint: "#1b1d20",
-    accent: "#e6c29f",
+    accent: "#f1b85b",
     sample: "#212225",
   },
   {
@@ -21,7 +26,7 @@ export const finishes = [
   {
     name: "Donington Grey",
     paint: "#777a79",
-    accent: "#d4d4d8",
+    accent: "#ccced0",
     sample: "#9a9b9d",
   },
   {
@@ -31,91 +36,36 @@ export const finishes = [
     sample: "#28594c",
   },
 ] as const;
-
-export const coreStack = [
-  "Swift",
-  "SwiftUI",
-  "AVPlayer",
-  "MapKit",
-  "Core Data",
-  "Python",
-  "FastAPI",
-  "YOLOv8",
-  "TypeScript",
-  "Node.js",
-  "Flutter",
-  "Docker",
-] as const;
-
-export const allProjects = [
+export const projects = [
   {
-    id: "firewatch",
+    id: "fire",
     name: "FireWatch-AI",
-    badge: "PUBLIC · iOS + AI",
-    badgeColor: "#e6c29f",
+    category: "Computer Vision / Native iOS",
     description:
-      "Нативное iOS-приложение с картой камер Казахстана, проверкой живых .m3u8 потоков и сервером FastAPI + YOLOv8 для детекции огня и дыма.",
-    metric: "→ 9/9 проверенных live HLS-потоков в 4 городах КЗ",
+      "Нативное iOS-приложение с картой 9 live HLS-камер Казахстана и сервером FastAPI + YOLOv8 для детекции огня и дыма.",
     tags: ["SwiftUI", "AVPlayer", "MapKit", "FastAPI", "YOLOv8"],
-    url: "https://github.com/Alizhan-T/FireWatch-AI",
-  },
-  {
-    id: "jas-crm",
-    name: "jas-crm",
-    badge: "PRIVATE · PRODUCTION",
-    badgeColor: "#818cf8",
-    description:
-      "Ежедневная веб и мобильная CRM для образовательных кураторов: расписания, учёт посещаемости, чаты и аналитика KPI.",
-    metric: "→ Авто-выгрузка отчётов в Excel и Telegram-бот",
-    tags: ["Full-Stack", "CRM", "Analytics", "Telegram API"],
-    url: "https://github.com/Alizhan-T",
+    url: contact.github + "/FireWatch-AI",
   },
   {
     id: "kitchen",
     name: "KitchenApp",
-    badge: "PUBLIC · iOS APP",
-    badgeColor: "#22c55e",
+    category: "Mobile Product / iOS",
     description:
-      "Мобильное приложение рецептов на SwiftUI (MVVM): debounced-поиск, пагинация, сохранение избранного без интернета и живые обсуждения.",
-    metric: "→ Offline-first Core Data + синхронизация Firebase",
+      "Приложение рецептов на SwiftUI (MVVM): debounced-поиск, офлайн-избранное в Core Data и обсуждения на Firebase.",
     tags: ["SwiftUI", "MVVM", "Core Data", "Firebase"],
-    url: "https://github.com/Alizhan-T/KitchenApp",
+    url: contact.github + "/KitchenApp",
   },
   {
     id: "market",
     name: "ALIZHMARKET",
-    badge: "PUBLIC · FULL-STACK",
-    badgeColor: "#e6c29f",
+    category: "Full-Stack / Web",
     description:
-      "Ролевой маркетплейс фермерских продуктов: личные кабинеты продавца и покупателя, каталог, корзина и обработка заказов.",
-    metric: "→ Полный цикл заказа Фермер → Покупатель",
+      "Ролевой маркетплейс фермерских продуктов: кабинеты продавца и покупателя, каталог, корзина и обработка заказов.",
     tags: ["Node.js", "Express", "MongoDB", "EJS"],
-    url: "https://github.com/Alizhan-T/alizhmarket",
-  },
-  {
-    id: "multiverse",
-    name: "MultiverseWiki",
-    badge: "PUBLIC · iOS & QA",
-    badgeColor: "#38bdf8",
-    description:
-      "iOS-приложение с мгновенным поиском, офлайн-базой, архитектурной документацией (ADR), QA-логами и набором автотестов.",
-    metric: "→ Чистая архитектура + покрытие Unit-тестами",
-    tags: ["Swift", "Unit Tests", "Offline Storage", "ADR"],
-    url: "https://github.com/Alizhan-T/MultiverseWiki",
-  },
-  {
-    id: "smartcampus",
-    name: "SmartCampus & weather-ios",
-    badge: "PUBLIC · SWIFTUI",
-    badgeColor: "#a78bfa",
-    description:
-      "Ролевая система контроля доступа в кампус на SwiftUI и погодный iOS-клиент с живыми прогнозами и синхронизацией через Firebase.",
-    metric: "→ ООП доменная модель доступа + нативный UI",
-    tags: ["Swift", "SwiftUI", "Firebase", "OOP"],
-    url: "https://github.com/Alizhan-T/SmartCampus",
+    url: contact.github + "/alizhmarket",
   },
 ] as const;
-
+export type Project = (typeof projects)[number];
 export type SceneSettings = {
   finish: number;
   headlights: boolean;

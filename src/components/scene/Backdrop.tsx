@@ -9,9 +9,7 @@ import {
 } from "react";
 import { finishes, type SceneSettings } from "../../data/portfolio";
 import { PreparedFrame } from "./PreparedFrame";
-
 const Stage = lazy(() => import("./Stage"));
-
 class StageBoundary extends Component<
   { fail: () => void; children: React.ReactNode },
   { failed: boolean }
@@ -27,7 +25,6 @@ class StageBoundary extends Component<
     return this.state.failed ? null : this.props.children;
   }
 }
-
 function Poster({ settings }: { settings: SceneSettings }) {
   return (
     <svg
@@ -65,91 +62,170 @@ function Poster({ settings }: { settings: SceneSettings }) {
     </svg>
   );
 }
-
-function FallbackTurntable({ settings }: { settings: SceneSettings }) {
-  const [frame, setFrame] = useState(8);
-  const drag = useRef<{ x: number; frame: number } | null>(null);
-  const path = "/media/orbit/" + String(frame).padStart(2, "0") + ".webp";
+function Frames({
+  settings,
+  section,
+}: {
+  settings: SceneSettings;
+  section: number;
+}) {
+  const [frame, setFrame] = useState(0),
+    [zoom, setZoom] = useState(1);
+  const drag = useRef<{ x: number; frame: number } | null>(null),
+    pinch = useRef<number | null>(null);
+  useEffect(() => {
+    if (!settings.inspect) {
+      setFrame(0);
+      setZoom(1);
+      return;
+    }
+    let stop = false;
+    const timer = window.setTimeout(async () => {
+      for (let i = 0; i < 24 && !stop; i++) {
+        const im = new Image();
+        im.src = "/media/orbit/" + String(i).padStart(2, "0") + ".webp";
+        try {
+          await im.decode();
+        } catch {
+          break;
+        }
+      }
+    }, 150);
+    return () => {
+      stop = true;
+      clearTimeout(timer);
+    };
+  }, [settings.inspect]);
+  const path = settings.inspect
+    ? "/media/orbit/" + String(frame).padStart(2, "0") + ".webp"
+    : section === 1
+      ? "/media/wheel.webp"
+      : section === 2
+        ? "/media/high.webp"
+        : "/media/orbit/08.webp";
   const change = (n: number) => setFrame(((n % 24) + 24) % 24);
-
   return (
     <div
-      className="turntable-fallback"
+      className={
+        "frame-fallback " + (settings.inspect ? "turntable" : "shot-" + section)
+      }
+      tabIndex={settings.inspect ? 0 : undefined}
+      role={settings.inspect ? "group" : undefined}
+      aria-label={
+        settings.inspect
+          ? "Осмотр автомобиля. Стрелки поворачивают, плюс и минус меняют масштаб."
+          : undefined
+      }
       onPointerDown={(e) => {
+        if (!settings.inspect) return;
         drag.current = { x: e.clientX, frame };
         e.currentTarget.setPointerCapture(e.pointerId);
       }}
       onPointerMove={(e) => {
-        if (drag.current) {
+        if (drag.current)
           change(
-            drag.current.frame + Math.round((drag.current.x - e.clientX) / 14),
+            drag.current.frame + Math.round((drag.current.x - e.clientX) / 15),
           );
-        }
       }}
       onPointerUp={() => (drag.current = null)}
       onPointerCancel={() => (drag.current = null)}
+      onWheel={(e) => {
+        if (settings.inspect)
+          setZoom((z) => Math.max(0.85, Math.min(1.75, z - e.deltaY * 0.0013)));
+      }}
+      onTouchMove={(e) => {
+        if (!settings.inspect || e.touches.length !== 2) return;
+        const [a, b] = Array.from(e.touches);
+        const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        if (pinch.current)
+          setZoom((z) =>
+            Math.max(0.85, Math.min(1.75, z + d / pinch.current! - 1)),
+          );
+        pinch.current = d;
+        drag.current = null;
+      }}
+      onTouchEnd={() => (pinch.current = null)}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+          e.preventDefault();
+          change(frame + (e.key === "ArrowLeft" ? -1 : 1));
+        }
+        if (e.key === "+") setZoom((z) => Math.min(z + 0.1, 1.75));
+        if (e.key === "-") setZoom((z) => Math.max(z - 0.1, 0.85));
+      }}
     >
-      <PreparedFrame path={path} settings={settings} zoom={1} index={frame} />
+      <PreparedFrame
+        path={path}
+        settings={settings}
+        zoom={zoom}
+        index={
+          settings.inspect ? frame : section === 1 ? 24 : section === 2 ? 25 : 8
+        }
+      />
     </div>
   );
 }
-
+type Props = {
+  settings: SceneSettings;
+  progress: React.RefObject<number>;
+  position: number;
+  forceLive: boolean;
+};
 export default function Backdrop({
   settings,
-  shot,
-  zoomEnabled,
-}: {
-  settings: SceneSettings;
-  shot: number;
-  zoomEnabled: boolean;
-}) {
+  progress,
+  position,
+  forceLive,
+}: Props) {
   const [gpu, setGpu] = useState(false),
     [failed, setFailed] = useState(false),
     [ready, setReady] = useState(false),
     [load, setLoad] = useState(0);
-
   const readyFn = useCallback(() => setReady(true), []),
     fail = useCallback(() => {
       setFailed(true);
       setReady(false);
     }, []);
-
   useEffect(() => {
     let stop = false;
-    try {
-      const canvas = document.createElement("canvas");
-      const gl = canvas.getContext("webgl2", {
-        failIfMajorPerformanceCaveat: true,
-      });
-      if (gl) {
-        gl.getExtension("WEBGL_lose_context")?.loseContext();
-        if (!stop) setGpu(true);
-      } else fail();
-    } catch {
-      fail();
-    }
+    const id = window.setTimeout(() => {
+      try {
+        const canvas = document.createElement("canvas");
+        const gl = canvas.getContext("webgl2", {
+          failIfMajorPerformanceCaveat: true,
+        });
+        if (gl) {
+          gl.getExtension("WEBGL_lose_context")?.loseContext();
+          if (!stop) setGpu(true);
+        } else fail();
+      } catch {
+        fail();
+      }
+    }, 200);
     return () => {
       stop = true;
+      clearTimeout(id);
     };
   }, [fail]);
-
-  const live = ready && !failed;
-
+  const showLive = settings.inspect || forceLive || position > 0.035,
+    live = ready && showLive && !failed;
+  const section = Math.max(0, Math.min(3, Math.round(position)));
+  const frames = failed && (settings.inspect || section > 0);
   return (
-    <div className="stage-canvas-wrap">
-      {!live && !failed && (
-        <div className="stage-poster">
-          <Poster settings={settings} />
-        </div>
-      )}
+    <div
+      className={"backdrop " + (settings.inspect ? "interactive" : "")}
+      aria-hidden={!settings.inspect}
+    >
+      <div className={"poster-layer " + (live || frames ? "conceal" : "")}>
+        <Poster settings={settings} />
+      </div>
       {gpu && !failed && (
-        <div className={"stage-webgl " + (live ? "is-ready" : "")}>
+        <div className={"webgl-layer " + (live ? "visible" : "")}>
           <StageBoundary fail={fail}>
             <Suspense fallback={null}>
               <Stage
                 settings={settings}
-                shot={shot}
-                zoomEnabled={zoomEnabled}
+                progress={progress}
                 onReady={readyFn}
                 onFail={fail}
                 onProgress={setLoad}
@@ -159,10 +235,10 @@ export default function Backdrop({
           </StageBoundary>
         </div>
       )}
-      {failed && <FallbackTurntable settings={settings} />}
-      {!failed && !ready && (
-        <div className="stage-loader" role="status">
-          <span>3D M5 F90 · {Math.round(load)}%</span>
+      {frames && <Frames settings={settings} section={section} />}
+      {showLive && !failed && !ready && (
+        <div className="loading-scene" role="status">
+          ЗАГРУЗКА МОДЕЛИ <span>{Math.round(load)}%</span>
         </div>
       )}
     </div>
