@@ -1,9 +1,37 @@
-# Alizhan-T.github.io — Developer Portfolio
+# Alizhan Toleukhan · M5 Showroom
 
-Personal developer portfolio hosted on GitHub Pages at **https://alizhan-t.github.io/**.
+Интерактивное портфолио с четырьмя ракурсами BMW M5 F90 и проектами из профиля [Alizhan-T](https://github.com/Alizhan-T). Интерфейс на русском языке.
 
-## Highlights
+## Локальный запуск
 
-- Showcases flagship public projects (**FireWatch-AI**, **KitchenApp**, **MultiverseWiki**, **ALIZHMARKET**), private EdTech/operations case studies (**jas-crm**, **ALIZH-PROCTORING**, **jas-curator-tools**), and supporting open-source repositories.
-- Zero-dependency static architecture (semantic HTML5, modern CSS, vanilla JS).
-- Responsive layout with dark/light theme persistence and interactive project category filters.
+Требуется Node.js 22.12 или новее.
+
+```sh
+npm ci
+npm run dev
+```
+
+Для проверки TypeScript выполните `npm run check`. Команда `npm run build` соберёт статический сайт в `dist/`. Разворачивайте содержимое каталога в корне домена. Модель, декодер Draco и шрифты загружаются с того же домена.
+
+## Где вносить изменения
+
+- `src/data/portfolio.ts` — проекты, ссылки, контакты и палитры. Заполните `contact.email` публичным рабочим адресом, чтобы включить копирование с подтверждением. До этого кнопка открывает запрос адреса в Telegram.
+- `src/components/scene` — модель, материалы, освещение, положение камеры и резервный просмотр. Начальный кадр — постановочное изображение. При взаимодействии или прокрутке сцена переходит в WebGL. На устройствах без аппаратного WebGL доступен 24-кадровый осмотр с масками краски и оптики.
+- `src/components/sections` — четыре раздела портфолио. Компоненты в `src/components/projects` рисуют интерактивные превью на основе репозиториев FireWatch-AI, KitchenApp и ALIZHMARKET. Каждая карточка ведёт к исходникам проекта.
+- `src/components/HUD.tsx` и `src/style.css` — управление шоурумом, адаптивные состояния, типографика и цвета.
+
+## 3D-ассеты
+
+В `public/models/bmw_m5_f90.glb` лежит готовая Draco-сжатая авторская модель. Для сборки сайта достаточно закоммиченных ассетов. Чтобы изменить геометрию, отредактируйте `scripts/model_f90.py`. Для повторной генерации нужны Python с NumPy, SciPy и Pillow, Blender 4.x и FFmpeg.
+
+```sh
+mkdir -p scripts/model/build
+python scripts/model_f90.py scripts/model/build/vehicle.glb
+npm ci --prefix scripts/model
+node scripts/model/compress.mjs scripts/model/build/vehicle.glb public/models/bmw_m5_f90.glb
+blender -b -P scripts/model/render_orbit.py
+blender -b -P scripts/model/masks.py
+python scripts/model/encode_frames.py
+```
+
+Модель использует метры, ось Y направлена вверх, нос автомобиля смотрит в +Z. Материалы Paint, Glass, DRL, Tail, Brake и Indicator связаны с управлением в шоуруме.
