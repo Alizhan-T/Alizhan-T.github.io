@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.sites-runtime/
+*.log
+scripts/model/build/
+__pycache__/
