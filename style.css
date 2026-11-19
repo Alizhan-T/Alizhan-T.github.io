@@ -498,6 +498,31 @@ body {
   font-weight: 500;
 }
 
+/* Interactive ASCII Eye */
+.eye-frame {
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #0b0c10;
+  padding: 28px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.ascii-eye {
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: clamp(6.5px, 1.15vw, 11px);
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  color: #d4d4d8;
+  white-space: pre;
+  text-align: center;
+}
+
 /* Footer */
 .site-footer {
   margin-top: 32px;
