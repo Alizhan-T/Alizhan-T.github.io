@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "cp index.dev.html index.html && vite --host 0.0.0.0",
     "check": "tsc --noEmit",
-    "build": "npm run check && vite build"
+    "build": "cp index.dev.html index.html && npm run check && vite build && rm -rf assets && cp -R dist/assets ./assets && cp dist/index.html ./index.html"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.2.6",
