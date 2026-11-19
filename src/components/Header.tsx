@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MapPin, Menu, X } from "lucide-react";
 import { sections } from "../data/portfolio";
+
 export function Monogram() {
   return (
     <svg viewBox="0 0 67 37" aria-hidden="true" className="monogram">
@@ -12,6 +13,29 @@ export function Monogram() {
     </svg>
   );
 }
+
+function useAstanaTime() {
+  const [time, setTime] = useState("UTC+5");
+  useEffect(() => {
+    const update = () => {
+      try {
+        const fmt = new Intl.DateTimeFormat("ru-RU", {
+          timeZone: "Asia/Almaty",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        setTime(fmt.format(new Date()) + " UTC+5");
+      } catch {
+        setTime("UTC+5");
+      }
+    };
+    update();
+    const id = window.setInterval(update, 15000);
+    return () => window.clearInterval(id);
+  }, []);
+  return time;
+}
+
 export function Header({
   active,
   navigate,
@@ -20,10 +44,13 @@ export function Header({
   navigate: (i: number) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const astanaTime = useAstanaTime();
+
   function go(i: number) {
     setOpen(false);
     navigate(i);
   }
+
   return (
     <header className="header">
       <div className="header-inner">
@@ -56,13 +83,18 @@ export function Header({
                 go(i);
               }}
             >
+              <span className="nav-index">0{i + 1}</span>
               {s.label}
             </a>
           ))}
         </nav>
         <div className="header-end">
+          <span className="status-pill" title="Открыт к проектам и командам">
+            <i className="status-dot" />
+            AVAILABLE
+          </span>
           <span className="place">
-            <MapPin size={13} /> ASTANA, KZ
+            <MapPin size={13} /> ASTANA · {astanaTime}
           </span>
           <button
             className="mobile-menu"

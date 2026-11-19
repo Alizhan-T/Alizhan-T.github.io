@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { Vector3, PerspectiveCamera, MathUtils } from "three";
+
 const shots = [
   {
     angle: 0.76,
@@ -36,6 +37,7 @@ const shots = [
     target: [0, 0.68, -0.2],
   },
 ];
+
 export default function CameraRig({
   progress,
   inspect,
@@ -45,7 +47,12 @@ export default function CameraRig({
 }) {
   const { camera: raw, size, invalidate } = useThree(),
     cam = raw as PerspectiveCamera,
-    prev = useRef(-10);
+    smoothT = useRef(0),
+    initialized = useRef(false),
+    pointerTarget = useRef({ x: 0, y: 0 }),
+    pointerCurrent = useRef({ x: 0, y: 0 }),
+    breathPhase = useRef(0);
+
   const v = useMemo(
     () => ({
       target: new Vector3(),
@@ -55,9 +62,24 @@ export default function CameraRig({
     }),
     [],
   );
+
   const mobile = size.width < 760;
+
   useEffect(() => {
-    prev.current = -10;
+    if (mobile) return;
+    const onPointerMove = (e: PointerEvent) => {
+      const nx = (e.clientX / Math.max(1, window.innerWidth) - 0.5) * 2;
+      const ny = (e.clientY / Math.max(1, window.innerHeight) - 0.5) * 2;
+      pointerTarget.current.x = MathUtils.clamp(nx, -1, 1);
+      pointerTarget.current.y = MathUtils.clamp(ny, -1, 1);
+      invalidate();
+    };
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onPointerMove);
+  }, [mobile, invalidate]);
+
+  useEffect(() => {
+    initialized.current = false;
     invalidate();
     if (inspect) {
       cam.clearViewOffset();
@@ -78,16 +100,40 @@ export default function CameraRig({
       cam.updateProjectionMatrix();
     }
   }, [inspect, size.width, size.height, cam, mobile, invalidate]);
-  useFrame(() => {
+
+  useFrame((_, dt) => {
     if (inspect) return;
-    const t = MathUtils.clamp(progress.current, 0, 3);
-    if (Math.abs(t - prev.current) < 0.00002) return;
-    prev.current = t;
+    const delta = Math.min(dt, 0.08);
+    const targetT = MathUtils.clamp(progress.current, 0, 3);
+
+    if (!initialized.current) {
+      smoothT.current = targetT;
+      initialized.current = true;
+    } else {
+      smoothT.current = MathUtils.damp(smoothT.current, targetT, 8.5, delta);
+    }
+
+    pointerCurrent.current.x = MathUtils.damp(
+      pointerCurrent.current.x,
+      pointerTarget.current.x,
+      6.5,
+      delta,
+    );
+    pointerCurrent.current.y = MathUtils.damp(
+      pointerCurrent.current.y,
+      pointerTarget.current.y,
+      6.5,
+      delta,
+    );
+    breathPhase.current += delta * 0.85;
+
+    const t = smoothT.current;
     const k = Math.min(2, Math.floor(t)),
       p = shots[k],
       n = shots[k + 1],
       blend = MathUtils.smoothstep(t - k, 0, 1),
       lerp = (a: number, b: number) => MathUtils.lerp(a, b, blend);
+
     cam.fov = mobile ? 43 : 32;
     const fill = mobile ? 0.91 : lerp(p.fill, n.fill);
     const span = mobile
@@ -99,8 +145,18 @@ export default function CameraRig({
         Math.tan((cam.fov * Math.PI) / 360) *
         (size.width / size.height) *
         fill);
-    const a = lerp(p.angle, n.angle),
-      h = lerp(p.height, n.height);
+
+    const parallaxAzimuth = mobile ? 0 : pointerCurrent.current.x * 0.052;
+    const parallaxElev = mobile ? 0 : -pointerCurrent.current.y * 0.022;
+    const idleBreath = Math.sin(breathPhase.current) * 0.006;
+
+    const a = lerp(p.angle, n.angle) + parallaxAzimuth + idleBreath;
+    const h = MathUtils.clamp(
+      lerp(p.height, n.height) + parallaxElev,
+      0.06,
+      1.25,
+    );
+
     v.target.lerpVectors(
       v.a.fromArray(p.target),
       v.b.fromArray(n.target),
@@ -112,6 +168,7 @@ export default function CameraRig({
       .add(v.target);
     cam.position.copy(v.pos);
     cam.lookAt(v.target);
+
     const off = mobile ? 0 : lerp(p.offset, n.offset);
     const vOff = mobile
       ? lerp([0.09, -0.24, -0.18, 0.12][k], [0.09, -0.24, -0.18, 0.12][k + 1])
@@ -125,7 +182,14 @@ export default function CameraRig({
       size.height,
     );
     cam.updateProjectionMatrix();
+
+    const settling =
+      Math.abs(targetT - smoothT.current) > 0.0003 ||
+      Math.abs(pointerTarget.current.x - pointerCurrent.current.x) > 0.001 ||
+      Math.abs(pointerTarget.current.y - pointerCurrent.current.y) > 0.001;
+    if (settling) invalidate();
   }, -1);
+
   return inspect ? (
     <OrbitControls
       makeDefault

@@ -207,7 +207,7 @@ export default function Backdrop({
       clearTimeout(id);
     };
   }, [fail]);
-  const showLive = settings.inspect || forceLive || position > 0.035,
+  const showLive = true || settings.inspect || forceLive || position > 0.035,
     live = ready && showLive && !failed;
   const section = Math.max(0, Math.min(3, Math.round(position)));
   const frames = failed && (settings.inspect || section > 0);
@@ -238,7 +238,13 @@ export default function Backdrop({
       {frames && <Frames settings={settings} section={section} />}
       {showLive && !failed && !ready && (
         <div className="loading-scene" role="status">
-          ЗАГРУЗКА МОДЕЛИ <span>{Math.round(load)}%</span>
+          <div className="loading-row">
+            <span>3D SHOWROOM // M5 F90</span>
+            <b>{Math.round(load)}%</b>
+          </div>
+          <div className="loading-bar">
+            <i style={{ width: Math.max(8, Math.round(load)) + "%" }} />
+          </div>
         </div>
       )}
     </div>
