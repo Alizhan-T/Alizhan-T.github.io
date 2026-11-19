@@ -1,110 +1,92 @@
-import { useFrame, useThree } from "@react-three/fiber";
-import {
-  Environment,
-  Lightformer,
-  MeshReflectorMaterial,
-} from "@react-three/drei";
-import { useRef } from "react";
-import { MathUtils, PointLight } from "three";
-export default function Lighting({
-  progress,
-  mobile,
-}: {
-  progress: React.RefObject<number>;
-  mobile: boolean;
-}) {
-  const time = useRef(0),
-    key = useRef<PointLight>(null),
-    invalidate = useThree((s) => s.invalidate);
-  useFrame(({ scene }, dt) => {
-    time.current += Math.min(dt, 0.08);
-    const dim = 1 - 0.4 * Math.max(0, 1 - Math.abs(progress.current - 2));
-    scene.environmentIntensity =
-      (0.45 + 0.8 * MathUtils.smoothstep(time.current, 0.24, 1.2)) * dim;
-    if (key.current) key.current.intensity = 32 * dim;
-    if (time.current < 1.25) invalidate();
-  });
+import { Environment, Lightformer } from "@react-three/drei";
+
+export default function Lighting({ mobile }: { mobile: boolean }) {
   return (
     <>
-      <color attach="background" args={["#101113"]} />
-      <fog attach="fog" args={["#101113", 11, 39]} />
-      <ambientLight intensity={0.36} />
-      <pointLight ref={key} position={[3.1, 5.4, 3.1]} intensity={32} />
+      <color attach="background" args={["#0b0c10"]} />
+      <fog attach="fog" args={["#0b0c10", 12, 34]} />
+
+      <ambientLight intensity={0.45} />
       <directionalLight
-        position={[-4, 3, -1]}
-        intensity={1.45}
-        color="#ecf2ff"
+        position={[4.5, 6.2, 4.0]}
+        intensity={2.4}
+        color="#ffffff"
       />
+      <directionalLight
+        position={[-4.5, 3.5, -2.5]}
+        intensity={1.35}
+        color="#dbeafe"
+      />
+      <pointLight position={[0, 4.2, 2.8]} intensity={18} color="#fff7ed" />
+
+      {/* Crisp dark automotive studio environment map (no muddy grey background!) */}
       <Environment resolution={mobile ? 128 : 256} frames={1}>
-        <color attach="background" args={["#393b3d"]} />
+        <color attach="background" args={["#050608"]} />
+        {/* Overhead twin LED studio rails */}
         <Lightformer
           form="rect"
-          intensity={5.2}
-          color="white"
-          position={[-2.6, 3.1, 0.5]}
-          rotation={[Math.PI / 2, 0, 0.2]}
-          scale={[0.38, 9, 1]}
+          intensity={9.5}
+          color="#ffffff"
+          position={[-1.9, 3.4, 0.3]}
+          rotation={[Math.PI / 2, 0, 0.08]}
+          scale={[0.32, 9.5, 1]}
         />
         <Lightformer
           form="rect"
-          intensity={6.6}
-          color="white"
-          position={[2.3, 3.1, 0.25]}
-          rotation={[Math.PI / 2, 0, -0.15]}
-          scale={[0.45, 8, 1]}
+          intensity={10.5}
+          color="#ffffff"
+          position={[1.9, 3.4, 0.2]}
+          rotation={[Math.PI / 2, 0, -0.08]}
+          scale={[0.36, 9.5, 1]}
         />
+        {/* Side shoulder rim highlights to accentuate F90 body creases & wheels */}
         <Lightformer
           form="rect"
-          intensity={3.5}
-          color="#e7eff8"
-          position={[4, 1.6, -3]}
+          intensity={5.5}
+          color="#e2e8f0"
+          position={[4.2, 1.35, 0]}
           rotation={[0, -Math.PI / 2, 0]}
-          scale={[8, 0.58, 1]}
+          scale={[8.5, 0.55, 1]}
         />
         <Lightformer
           form="rect"
-          intensity={4.4}
-          color="white"
-          position={[-3.4, 1.7, 1]}
+          intensity={5.5}
+          color="#e2e8f0"
+          position={[-4.2, 1.35, 0]}
           rotation={[0, Math.PI / 2, 0]}
-          scale={[8, 1.1, 1]}
+          scale={[8.5, 0.55, 1]}
+        />
+        {/* Front & rear fill strip */}
+        <Lightformer
+          form="rect"
+          intensity={4.2}
+          color="#f8fafc"
+          position={[0, 2.2, 5.2]}
+          rotation={[0, Math.PI, 0]}
+          scale={[5.5, 0.45, 1]}
         />
         <Lightformer
           form="rect"
-          intensity={3.2}
-          color="white"
-          position={[0, 4, -5]}
-          scale={[8, 0.32, 1]}
+          intensity={3.6}
+          color="#f1b85b"
+          position={[0, 2.0, -5.2]}
+          scale={[5.5, 0.35, 1]}
         />
       </Environment>
-      <mesh position={[0, -0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[110, 110]} />
-        <MeshReflectorMaterial
-          resolution={mobile ? 128 : 256}
-          blur={mobile ? [80, 15] : [165, 25]}
-          mixBlur={0.78}
-          mixStrength={0.85}
-          roughness={0.72}
-          metalness={0.24}
-          color="#292a2c"
-          mirror={0.25}
+
+      {/* Lightweight zero-lag studio podium & contact shadow under the car */}
+      <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[6.2, 64]} />
+        <meshStandardMaterial
+          color="#11131a"
+          roughness={0.55}
+          metalness={0.25}
         />
       </mesh>
-      {[
-        [-6, 4.2, -3],
-        [-1.8, 4.2, -3],
-        [2.4, 4.2, -3],
-        [6.6, 4.2, -3],
-      ].map((p, i) => (
-        <mesh
-          key={i}
-          position={p as [number, number, number]}
-          rotation={[0, 0, -0.03]}
-        >
-          <boxGeometry args={[0.047, 0.035, 10]} />
-          <meshBasicMaterial color="#eeeeea" toneMapped={false} />
-        </mesh>
-      ))}
+      <mesh position={[0, 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[2.35, 5.15]} />
+        <meshBasicMaterial color="#030406" transparent opacity={0.78} />
+      </mesh>
     </>
   );
 }
