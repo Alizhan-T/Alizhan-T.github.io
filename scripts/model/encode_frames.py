@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 
 base = Path(__file__).resolve().parent / "build"
-destination = Path(__file__).resolve().parents[2] / "public/media"
+destination = Path(__file__).resolve().parents[2] / "media"
 (destination / "orbit").mkdir(exist_ok=True, parents=True)
 names = [f"{index:02}" for index in range(24)] + ["wheel", "high"]
 atlas = Image.new("RGB", (448 * 6, 252 * 5))

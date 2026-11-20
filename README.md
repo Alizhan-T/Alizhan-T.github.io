@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Для проверки TypeScript выполните `npm run check`. Команда `npm run build` соберёт статический сайт в `dist/`. Разворачивайте содержимое каталога в корне домена. Модель, декодер Draco и шрифты загружаются с того же домена.
+Для проверки TypeScript выполните `npm run check`. Команда `npm run build` создаёт автономный сайт в `dist/` и обновляет скомпилированную точку входа и ассеты в корне для GitHub Pages. Исходный HTML находится в `index.dev.html`. Разворачивайте содержимое каталога в корне домена. Модель, декодер Draco и шрифты загружаются с того же домена.
 
 ## Где вносить изменения
 
@@ -22,13 +22,13 @@ npm run dev
 
 ## 3D-ассеты
 
-В `public/models/bmw_m5_f90.glb` лежит готовая Draco-сжатая авторская модель. Для сборки сайта достаточно закоммиченных ассетов. Чтобы изменить геометрию, отредактируйте `scripts/model_f90.py`. Для повторной генерации нужны Python с NumPy, SciPy и Pillow, Blender 4.x и FFmpeg.
+В `models/bmw_m5_f90.glb` лежит готовая Draco-сжатая авторская модель. Для сборки сайта достаточно закоммиченных ассетов. Чтобы изменить геометрию, отредактируйте `scripts/model_f90.py`. Для повторной генерации нужны Python с NumPy, SciPy и Pillow, Blender 4.x и FFmpeg.
 
 ```sh
 mkdir -p scripts/model/build
 python scripts/model_f90.py scripts/model/build/vehicle.glb
 npm ci --prefix scripts/model
-node scripts/model/compress.mjs scripts/model/build/vehicle.glb public/models/bmw_m5_f90.glb
+node scripts/model/compress.mjs scripts/model/build/vehicle.glb models/bmw_m5_f90.glb
 blender -b -P scripts/model/render_orbit.py
 blender -b -P scripts/model/masks.py
 python scripts/model/encode_frames.py
