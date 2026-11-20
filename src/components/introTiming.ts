@@ -10,7 +10,7 @@ export const INTRO_PLAYBACK_RATE = 1.0;
 /** Smooth opacity-only fade-out duration in milliseconds */
 export const INTRO_FADE_DURATION_MS = 500;
 
-export const INTRO_VIDEO_SRC = "/videos/m5_intro.mp4";
+export const INTRO_VIDEO_SRC = "/videos/m5_intro_1080p.mp4";
 export const INTRO_SEEN_STORAGE_KEY = "m5_f90_intro_seen";
 
 /**

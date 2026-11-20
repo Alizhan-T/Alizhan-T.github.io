@@ -38,17 +38,17 @@ export interface AmbientParticleField {
  * Generates a high-resolution crisp 1024x1024 (4x4 wide-cell) JetBrains Mono glyph atlas
  * without mipmap blur so every floating code line and token renders razor-sharp.
  */
-function createCrispGlyphAtlas(): THREE.CanvasTexture {
-  const width = 1024;
-  const height = 512;
+const ATLAS_FONT_FAMILY = '"JetBrains Mono", ui-monospace, monospace';
+// 2x atlas (512x256 px per cell) keeps glyphs sharp on high-DPR screens and close-up particles
+const ATLAS_SCALE = 2;
+
+function drawGlyphAtlas(canvas: HTMLCanvasElement) {
+  const width = canvas.width;
+  const height = canvas.height;
   const cols = 4;
   const rows = 4;
   const cellW = width / cols;
   const cellH = height / rows;
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
   const ctx = canvas.getContext("2d")!;
 
   ctx.clearRect(0, 0, width, height);
@@ -62,20 +62,46 @@ function createCrispGlyphAtlas(): THREE.CanvasTexture {
     const cy = row * cellH + cellH * 0.5;
     const token = CODE_TOKENS[i];
 
-    const fontSize = token.length > 10 ? 22 : token.length > 5 ? 30 : 38;
-    ctx.font = `600 ${fontSize}px "JetBrains Mono", monospace`;
+    const fontSize =
+      (token.length > 10 ? 22 : token.length > 5 ? 30 : 38) * ATLAS_SCALE;
+    ctx.font = `600 ${fontSize}px ${ATLAS_FONT_FAMILY}`;
 
     // Crisp razor-sharp text with subtle electric cyan core
     ctx.fillStyle = "#E0F2FE";
     ctx.fillText(token, cx, cy);
   }
+}
+
+function createCrispGlyphAtlas(): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024 * ATLAS_SCALE;
+  canvas.height = 512 * ATLAS_SCALE;
+  drawGlyphAtlas(canvas);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.generateMipmaps = false;
-  tex.minFilter = THREE.LinearFilter;
+  // Trilinear mipmaps: sharp at 1:1, no shimmering/aliasing when tokens are far and small
+  tex.generateMipmaps = true;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
   tex.magFilter = THREE.LinearFilter;
+  tex.anisotropy = 4;
   tex.needsUpdate = true;
+
+  // The webfont is lazy-loaded, so the first draw may use a fallback face —
+  // redraw the atlas once JetBrains Mono is actually available.
+  if (typeof document !== "undefined" && document.fonts?.load) {
+    document.fonts
+      .load(`600 ${38 * ATLAS_SCALE}px ${ATLAS_FONT_FAMILY}`, "const 0xF90")
+      .then((faces) => {
+        if (faces.length === 0) return;
+        drawGlyphAtlas(canvas);
+        tex.needsUpdate = true;
+      })
+      .catch(() => {
+        // Keep the fallback-font atlas
+      });
+  }
+
   return tex;
 }
 
