@@ -17,10 +17,9 @@ export default function About() {
           University).
         </p>
         <p className="muted">
-          В FireWatch-AI соединил карту Казахстана с live HLS-потоками и
-          YOLOv8, в KitchenApp построил офлайн-хранилище на Core Data +
-          Firebase, а также разработал CRM-систему jas-crm и маркетплейс
-          ALIZHMARKET.
+          В FireWatch-AI работаю с видеопотоками и MapKit. В KitchenApp
+          избранные рецепты хранятся в Core Data, а комментарии обновляются
+          через Firebase. Для веба разрабатываю jas-crm и ALIZHMARKET.
         </p>
         <div className="skills">
           {[

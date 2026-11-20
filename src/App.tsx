@@ -85,7 +85,9 @@ export default function App() {
     ro.observe(document.querySelector("main")!);
     measure();
     sync();
-    const hash = sections.find((s) => "#" + s.id === location.hash);
+    const hash = location.hash.startsWith("#demo/")
+      ? sections[2]
+      : sections.find((s) => "#" + s.id === location.hash);
     if (hash)
       requestAnimationFrame(() =>
         scroll.scrollTo("#" + hash.id, { immediate: true }),

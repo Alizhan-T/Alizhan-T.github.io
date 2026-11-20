@@ -2,7 +2,7 @@ export const contact = {
   github: "https://github.com/Alizhan-T",
   telegram: "https://t.me/alizhnn",
   linkedin: "https://www.linkedin.com/in/alizhkamn",
-  email: "" as string,
+  email: "a.toleuxan06@mail.ru",
 };
 export const sections = [
   { id: "hero", label: "Главная", code: "HERO", camera: "FRONT ¾" },
@@ -42,7 +42,7 @@ export const projects = [
     name: "FireWatch-AI",
     category: "Computer Vision / Native iOS",
     description:
-      "Нативное iOS-приложение с картой 9 live HLS-камер Казахстана и сервером FastAPI + YOLOv8 для детекции огня и дыма.",
+      "Камеры Казахстана на карте и просмотр HLS-потоков на iPhone. Дополнительный сервис анализирует кадры на признаки огня и дыма.",
     tags: ["SwiftUI", "AVPlayer", "MapKit", "FastAPI", "YOLOv8"],
     url: contact.github + "/FireWatch-AI",
   },
@@ -51,16 +51,25 @@ export const projects = [
     name: "KitchenApp",
     category: "Mobile Product / iOS",
     description:
-      "Приложение рецептов на SwiftUI (MVVM): debounced-поиск, офлайн-избранное в Core Data и обсуждения на Firebase.",
+      "Поиск рецептов, избранное без интернета и обсуждение блюд в реальном времени.",
     tags: ["SwiftUI", "MVVM", "Core Data", "Firebase"],
     url: contact.github + "/KitchenApp",
+  },
+  {
+    id: "wiki",
+    name: "MultiverseWiki",
+    category: "Native iOS / Character Guide",
+    description:
+      "Справочник по вселенной «Рика и Морти». Поиск персонажей по имени и избранное, доступное без сети.",
+    tags: ["SwiftUI", "Core Data", "MVVM", "URLSession"],
+    url: contact.github + "/MultiverseWiki",
   },
   {
     id: "market",
     name: "ALIZHMARKET",
     category: "Full-Stack / Web",
     description:
-      "Ролевой маркетплейс фермерских продуктов: кабинеты продавца и покупателя, каталог, корзина и обработка заказов.",
+      "Фермеры ведут каталог и собирают заказы. Покупатели выбирают продукты и оформляют корзину.",
     tags: ["Node.js", "Express", "MongoDB", "EJS"],
     url: contact.github + "/alizhmarket",
   },

@@ -1,19 +1,44 @@
-import { useEffect, useRef, useState } from "react";
-import { Github, Maximize2, X } from "lucide-react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { Github, Maximize2, Play, X } from "lucide-react";
 import { projects, type Project } from "../../data/portfolio";
 import FireWatch from "../projects/FireWatch";
 import Kitchen from "../projects/Kitchen";
 import Market from "../projects/Market";
+import Multiverse from "../projects/Multiverse";
 import { Eyebrow } from "./Hero";
-const visuals = { fire: FireWatch, kitchen: Kitchen, market: Market };
-function ProjectCard({ p, open }: { p: Project; open: () => void }) {
-  const Viz = visuals[p.id];
+
+const visuals = {
+  fire: FireWatch,
+  kitchen: Kitchen,
+  wiki: Multiverse,
+  market: Market,
+};
+const demoHash = (project: Project) => "#demo/" + project.name.toLowerCase();
+const projectAtLocation = () =>
+  projects.find((p) => demoHash(p) === location.hash) ?? null;
+
+function ProjectCard({
+  project,
+  open,
+}: {
+  project: Project;
+  open: (p: Project) => void;
+}) {
+  const Viz = visuals[project.id];
+  function openLink(event: MouseEvent<HTMLAnchorElement>) {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
+      return;
+    event.preventDefault();
+    open(project);
+  }
   return (
     <article className="project-card">
       <button
         className="visual-opener"
-        onClick={open}
-        aria-label={"Открыть превью " + p.name}
+        type="button"
+        onClick={() => open(project)}
+        aria-haspopup="dialog"
+        aria-label={"Открыть мини-демо " + project.name}
       >
         <Viz />
         <i>
@@ -21,33 +46,69 @@ function ProjectCard({ p, open }: { p: Project; open: () => void }) {
         </i>
       </button>
       <div className="card-content">
-        <div className="category">{p.category}</div>
-        <h3>{p.name}</h3>
-        <p>{p.description}</p>
+        <div className="category">{project.category}</div>
+        <h3>{project.name}</h3>
+        <p>{project.description}</p>
         <div className="tags">
-          {p.tags.map((t) => (
-            <span key={t}>{t}</span>
+          {project.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
           ))}
         </div>
         <div className="card-links">
-          <a href={p.url} target="_blank" rel="noreferrer">
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={project.name + " на GitHub"}
+          >
             <Github size={14} />
             GitHub
           </a>
-          <button onClick={open}>Превью</button>
+          <a
+            className="demo-link"
+            href={demoHash(project)}
+            onClick={openLink}
+            aria-haspopup="dialog"
+          >
+            <Play size={13} />
+            Мини-демо
+          </a>
         </div>
       </div>
     </article>
   );
 }
+
 export default function Projects() {
-  const [project, set] = useState<Project | null>(null),
-    dialog = useRef<HTMLDialogElement>(null);
+  const [selected, setSelected] = useState<Project | null>(projectAtLocation);
+  const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    if (project) dialog.current?.showModal();
-    else dialog.current?.close();
-  }, [project]);
-  const Viz = project && visuals[project.id];
+    const sync = () => setSelected(projectAtLocation());
+    window.addEventListener("hashchange", sync);
+    window.addEventListener("popstate", sync);
+    return () => {
+      window.removeEventListener("hashchange", sync);
+      window.removeEventListener("popstate", sync);
+    };
+  }, []);
+  useEffect(() => {
+    const el = dialog.current;
+    if (selected && !el?.open) el?.showModal();
+    if (!selected && el?.open) el.close();
+  }, [selected]);
+  function open(project: Project) {
+    history.pushState({ showroomDemo: true }, "", demoHash(project));
+    setSelected(project);
+  }
+  function close() {
+    if (history.state?.showroomDemo) {
+      history.back();
+      return;
+    }
+    history.replaceState(null, "", "#projects");
+    setSelected(null);
+  }
+  const Viz = selected && visuals[selected.id];
   return (
     <section
       id="projects"
@@ -60,39 +121,44 @@ export default function Projects() {
           Избранные проекты<span>.</span>
         </h2>
         <div className="project-grid">
-          {projects.map((p) => (
-            <ProjectCard key={p.id} p={p} open={() => set(p)} />
+          {projects.map((project) => (
+            <ProjectCard key={project.id} project={project} open={open} />
           ))}
         </div>
       </div>
       <dialog
         ref={dialog}
         className="demo-modal"
-        onCancel={() => set(null)}
+        aria-labelledby="demo-project-name"
+        onCancel={(e) => {
+          e.preventDefault();
+          close();
+        }}
         onClick={(e) => {
-          if (e.target === e.currentTarget) set(null);
+          if (e.target === e.currentTarget) close();
         }}
       >
-        {project && Viz && (
-          <div className="demo-box">
+        {selected && Viz && (
+          <div className="demo-box" key={selected.id}>
             <div className="modal-header">
               <div>
-                <span className="micro">ИНТЕРАКТИВНОЕ ПРЕВЬЮ</span>
-                <h3>{project.name}</h3>
+                <span className="micro">ИНТЕРАКТИВНЫЙ МАКЕТ</span>
+                <h3 id="demo-project-name">{selected.name}</h3>
               </div>
               <button
-                aria-label="Закрыть превью"
-                onClick={() => set(null)}
+                type="button"
+                aria-label="Закрыть мини-демо"
+                onClick={close}
                 autoFocus
               >
                 <X />
               </button>
             </div>
             <Viz interactive />
-            <p>{project.description}</p>
+            <p>{selected.description}</p>
             <a
               className="modal-source"
-              href={project.url}
+              href={selected.url}
               target="_blank"
               rel="noreferrer"
             >

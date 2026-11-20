@@ -1,27 +1,72 @@
-import { useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type PointerEvent,
+} from "react";
 import { Copy, Github, Send, Linkedin, Check } from "lucide-react";
 import { contact } from "../../data/portfolio";
 import { Eyebrow } from "./Hero";
-export default function Contact({ brake }: { brake: (b: boolean) => void }) {
-  const [copied, setCopied] = useState(false),
-    [error, setError] = useState(false);
-  async function copy() {
+
+const links = [
+  { name: "GitHub", url: contact.github, Icon: Github },
+  { name: "Telegram", url: contact.telegram, Icon: Send },
+  { name: "LinkedIn", url: contact.linkedin, Icon: Linkedin },
+];
+
+async function copyEmail() {
+  try {
+    await navigator.clipboard.writeText(contact.email);
+    return true;
+  } catch {
+    const field = document.createElement("textarea");
+    field.value = contact.email;
+    field.setAttribute("readonly", "");
+    field.style.cssText = "position:fixed;left:-9999px;top:0";
+    const previous = document.activeElement;
+    document.body.append(field);
+    field.select();
     try {
-      await navigator.clipboard.writeText(contact.email);
-      setCopied(true);
-      setError(false);
-      window.setTimeout(() => setCopied(false), 2000);
+      return document.execCommand("copy");
     } catch {
-      setError(true);
+      return false;
+    } finally {
+      field.remove();
+      if (previous instanceof HTMLElement)
+        previous.focus({ preventScroll: true });
     }
+  }
+}
+
+export default function Contact({
+  brake,
+}: {
+  brake: (enabled: boolean) => void;
+}) {
+  const [status, setStatus] = useState<"idle" | "copied" | "manual">("idle");
+  const timeout = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(timeout.current), []);
+  async function copy() {
+    const copied = await copyEmail();
+    setStatus(copied ? "copied" : "manual");
+    window.clearTimeout(timeout.current);
+    if (copied)
+      timeout.current = window.setTimeout(() => setStatus("idle"), 2200);
   }
   const events = {
     onFocus: () => brake(true),
-    onBlur: () => brake(false),
+    onBlur: (e: FocusEvent<HTMLElement>) =>
+      brake(e.currentTarget.matches(":hover")),
     onPointerEnter: () => brake(true),
-    onPointerLeave: () => brake(false),
+    onPointerLeave: (e: PointerEvent<HTMLElement>) =>
+      brake(e.currentTarget.matches(":focus-visible")),
     onPointerDown: () => brake(true),
-    onPointerUp: () => brake(false),
+    onPointerUp: (e: PointerEvent<HTMLElement>) =>
+      brake(
+        e.pointerType === "mouse" || e.currentTarget.matches(":focus-visible"),
+      ),
+    onPointerCancel: () => brake(false),
   };
   return (
     <section
@@ -39,36 +84,26 @@ export default function Contact({ brake }: { brake: (b: boolean) => void }) {
           <br />
           или совместный проект.
         </p>
-        {contact.email ? (
-          <>
-            <button className="btn primary email" onClick={copy} {...events}>
-              {copied ? <Check size={18} /> : <Copy size={18} />}
-              <span aria-live="polite">
-                {copied ? "Скопировано" : contact.email}
-              </span>
-            </button>
-            {error && (
-              <p role="status">Скопируйте адрес вручную: {contact.email}</p>
-            )}
-          </>
-        ) : (
-          <a
-            className="btn primary"
-            href={contact.telegram}
-            target="_blank"
-            rel="noreferrer"
-            {...events}
-          >
-            <Send size={17} />
-            Написать в Telegram (@alizhnn)
-          </a>
-        )}
+        <button
+          className="btn primary email"
+          onClick={copy}
+          aria-label={"Скопировать email " + contact.email}
+          {...events}
+        >
+          {status === "copied" ? <Check size={18} /> : <Copy size={18} />}
+          <span>{contact.email}</span>
+        </button>
+        <output className="copy-feedback" role="status">
+          {status === "copied" ? (
+            "Скопировано"
+          ) : status === "manual" ? (
+            <>
+              Адрес для копирования — <span>{contact.email}</span>
+            </>
+          ) : null}
+        </output>
         <div className="socials">
-          {[
-            { name: "GitHub", url: contact.github, Icon: Github },
-            { name: "Telegram", url: contact.telegram, Icon: Send },
-            { name: "LinkedIn", url: contact.linkedin, Icon: Linkedin },
-          ].map(({ name, url, Icon }) => (
+          {links.map(({ name, url, Icon }) => (
             <a
               key={name}
               href={url}
