@@ -90,10 +90,10 @@ export function StackSection({ readmeSkills }: StackSectionProps) {
   }, [category]);
 
   return (
-    <section id="stack" className="relative flex min-h-screen items-center py-24">
+    <section id="stack" className="relative flex items-center py-14 sm:min-h-screen sm:py-24">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="ml-auto max-w-2xl space-y-6">
-          <div className="m5-card rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="m5-card rounded-2xl p-5 sm:p-8 space-y-5 sm:space-y-6">
             <div className="flex flex-col gap-4">
               <div>
                 <p className="font-mono text-xs text-[#38BDF8]">
@@ -104,11 +104,11 @@ export function StackSection({ readmeSkills }: StackSectionProps) {
                 </h2>
               </div>
 
-              {/* Interactive Segmented Category Filter */}
+              {/* Interactive Segmented Category Filter (clean single-row scroll on mobile) */}
               <div
                 role="tablist"
                 aria-label="Фильтр категорий стека"
-                className="inline-flex w-fit max-w-full flex-wrap items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-1"
+                className="no-scrollbar flex w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-lg border border-white/10 bg-white/[0.03] p-1 sm:inline-flex sm:w-fit sm:flex-wrap"
               >
                 {CATEGORIES.map((cat) => {
                   const active = category === cat;
@@ -119,7 +119,7 @@ export function StackSection({ readmeSkills }: StackSectionProps) {
                       role="tab"
                       aria-selected={active}
                       onClick={() => setCategory(cat)}
-                      className={`rounded-md px-2.5 py-1.5 font-mono text-xs whitespace-nowrap shrink-0 transition-colors focus-visible:outline-2 focus-visible:outline-[#38BDF8] ${
+                      className={`min-h-[36px] rounded-md px-3 py-1.5 font-mono text-xs whitespace-nowrap shrink-0 transition-colors focus-visible:outline-2 focus-visible:outline-[#38BDF8] sm:min-h-0 sm:px-2.5 ${
                         active
                           ? "bg-[#0052A5] text-white"
                           : "text-slate-400 hover:bg-white/5 hover:text-slate-100"

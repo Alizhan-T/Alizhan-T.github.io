@@ -31,12 +31,12 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
   return (
     <section
       id="projects"
-      className="relative flex min-h-[135vh] items-center py-24"
+      className="relative flex items-center py-14 sm:min-h-[115vh] sm:py-24"
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-8">
           {/* Section Header + Interactive Category Filter */}
-          <div className="m5-card flex flex-col gap-4 rounded-2xl p-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="m5-card flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
             <div>
               <p className="font-mono text-xs text-[#38BDF8]">
                 03. Selected Works · GitHub Alizhan-T
@@ -49,7 +49,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
             <div
               role="tablist"
               aria-label="Фильтр проектов по направлению"
-              className="flex flex-wrap items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-1"
+              className="no-scrollbar flex w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-lg border border-white/10 bg-white/[0.03] p-1 sm:w-fit sm:flex-wrap"
             >
               {FILTERS.map((item) => {
                 const active = filter === item;
@@ -60,7 +60,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setFilter(item)}
-                    className={`rounded-md px-2.5 py-1.5 font-mono text-xs whitespace-nowrap shrink-0 transition-colors focus-visible:outline-2 focus-visible:outline-[#38BDF8] ${
+                    className={`min-h-[36px] rounded-md px-3 py-1.5 font-mono text-xs whitespace-nowrap shrink-0 transition-colors focus-visible:outline-2 focus-visible:outline-[#38BDF8] sm:min-h-0 sm:px-2.5 ${
                       active
                         ? "bg-[#0052A5] text-white"
                         : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
@@ -75,11 +75,11 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
 
           {/* Loading State */}
           {loading && filtered.length === 0 ? (
-            <div className="m5-card rounded-2xl p-8 font-mono text-sm text-slate-400">
+            <div className="m5-card rounded-2xl p-6 font-mono text-sm text-slate-400 sm:p-8">
               Загрузка репозиториев Alizhan-T из GitHub API...
             </div>
           ) : filtered.length === 0 ? (
-            <div className="m5-card rounded-2xl p-8 text-sm text-slate-400">
+            <div className="m5-card rounded-2xl p-6 text-sm text-slate-400 sm:p-8">
               В выбранной категории пока нет публичных репозиториев.{" "}
               <button
                 type="button"
@@ -95,7 +95,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
               {filtered.map((project) => (
                 <article
                   key={project.id}
-                  className="m5-card group flex flex-col justify-between rounded-2xl p-6 transition-colors hover:border-[#38BDF8]/45"
+                  className="m5-card group flex flex-col justify-between rounded-2xl p-5 transition-colors hover:border-[#38BDF8]/45 sm:p-6"
                 >
                   <div className="space-y-3">
                     {/* Quiet unboxed metadata kicker (zero pill sandwiches) */}

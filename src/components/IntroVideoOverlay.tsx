@@ -91,11 +91,11 @@ export function IntroVideoOverlay({
     <div
       data-testid="intro-video-overlay"
       data-intro-fading={fading ? "true" : "false"}
-      className={`fixed inset-0 z-50 overflow-hidden bg-black transition-opacity duration-500 ease-out ${
+      className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black transition-opacity duration-500 ease-out ${
         fading ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
-      {/* Pure original video quality: zero CSS filters, zero blend modes, zero zoom/scale */}
+      {/* Pure original video quality: full-width uncropped cinema on portrait mobile, full-bleed cover on desktop */}
       <video
         ref={videoRef}
         src={INTRO_VIDEO_SRC}
@@ -113,7 +113,7 @@ export function IntroVideoOverlay({
         }}
         onEnded={requestFadeOnce}
         onError={requestFadeOnce}
-        className="h-full w-full object-cover"
+        className="h-auto max-h-full w-full object-contain md:h-full md:object-cover"
       />
 
       {/* Ultra-thin edge feathering strictly along the outer 10% border — center car 100% untouched */}
@@ -122,16 +122,16 @@ export function IntroVideoOverlay({
         className="m5-intro-vignette pointer-events-none absolute inset-0"
       />
 
-      {/* Discreet SKIP [ESC] button in bottom-right corner */}
+      {/* Discreet touch-friendly SKIP [ESC] button in bottom-right corner */}
       {!fading && (
         <button
           type="button"
           onClick={requestFadeOnce}
           data-testid="skip-intro-btn"
-          className="fixed bottom-6 right-6 z-[60] inline-flex items-center gap-2 rounded-lg border border-white/15 bg-black/75 px-3.5 py-2 font-mono text-xs tracking-wide text-slate-300 transition-colors hover:border-[#38BDF8]/60 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8]"
+          className="fixed right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[60] inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-white/15 bg-black/80 px-4 py-2 font-mono text-xs tracking-wide text-slate-200 transition-colors hover:border-[#38BDF8]/60 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] sm:right-6 sm:bottom-6 sm:min-h-0 sm:px-3.5"
         >
           <span>SKIP</span>
-          <span className="text-[#38BDF8]">[ESC]</span>
+          <span className="hidden text-[#38BDF8] sm:inline">[ESC]</span>
         </button>
       )}
     </div>

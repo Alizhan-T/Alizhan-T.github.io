@@ -5,7 +5,7 @@ import { detectSoftwareGl } from "./glCaps";
 import { buildAmbientParticleField } from "./ambientParticles";
 
 function ParticleLayerScene({ isSoftwareGl }: { isSoftwareGl: boolean }) {
-  const { gl, camera, invalidate } = useThree();
+  const { gl, camera, size, invalidate } = useThree();
   const pointerRef = useRef({ x: 0, y: 0, smoothX: 0, smoothY: 0 });
   const timeAccumRef = useRef(0);
 
@@ -27,6 +27,11 @@ function ParticleLayerScene({ isSoftwareGl }: { isSoftwareGl: boolean }) {
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
   }, [isSoftwareGl, invalidate]);
+
+  // Re-invalidate on viewport resize for software WebGL
+  useEffect(() => {
+    if (isSoftwareGl) invalidate();
+  }, [size.width, size.height, isSoftwareGl, invalidate]);
 
   // Paced software-GL rendering via WebGL2 fenceSync so headless Chromium never stalls
   useEffect(() => {
@@ -82,7 +87,8 @@ function ParticleLayerScene({ isSoftwareGl }: { isSoftwareGl: boolean }) {
 
   useFrame((_, rawDelta) => {
     const dt = Math.min(rawDelta, 0.05);
-    timeAccumRef.current += dt * 0.48;
+    const isMobile = size.width < 768;
+    timeAccumRef.current += dt * (isMobile ? 0.36 : 0.48);
 
     pointerRef.current.smoothX = THREE.MathUtils.damp(
       pointerRef.current.smoothX,
@@ -99,14 +105,19 @@ function ParticleLayerScene({ isSoftwareGl }: { isSoftwareGl: boolean }) {
 
     const u = field.uniforms;
     u.uTime.value = timeAccumRef.current;
-    u.uOpacity.value = 0.56;
-    u.uMouseReact.value = 1.0;
+    u.uSizeScale.value = isMobile ? 0.48 : 1.0;
+    u.uOpacity.value = isMobile ? 0.42 : 0.56;
+    u.uMouseReact.value = isMobile ? 0.25 : 1.0;
     u.uPointer.value.set(pointerRef.current.smoothX, pointerRef.current.smoothY);
 
-    const px = pointerRef.current.smoothX * 0.5;
-    const py = pointerRef.current.smoothY * 0.28;
+    const px = pointerRef.current.smoothX * (isMobile ? 0.15 : 0.5);
+    const py = pointerRef.current.smoothY * (isMobile ? 0.1 : 0.28);
+    const targetZ = isMobile ? 9.0 : 7.2;
     camera.position.x = THREE.MathUtils.damp(camera.position.x, px, 3.5, dt);
     camera.position.y = THREE.MathUtils.damp(camera.position.y, py, 3.5, dt);
+    camera.position.z = isSoftwareGl
+      ? targetZ
+      : THREE.MathUtils.damp(camera.position.z, targetZ, 4.5, dt);
     camera.lookAt(0, 0, -2.0);
   });
 

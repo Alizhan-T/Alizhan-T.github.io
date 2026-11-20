@@ -23,6 +23,7 @@ export interface AmbientParticleUniforms {
   [uniform: string]: THREE.IUniform;
   uTime: { value: number };
   uOpacity: { value: number };
+  uSizeScale: { value: number };
   uPointer: { value: THREE.Vector2 };
   uMouseReact: { value: number };
 }
@@ -144,7 +145,8 @@ export function buildAmbientParticleField(
     uAtlas: { value: THREE.CanvasTexture };
   } = {
     uTime: { value: 0 },
-    uOpacity: { value: 0.56 }, // Clearly visible 0.45 - 0.65 range
+    uOpacity: { value: 0.56 }, // Clearly visible 0.45 - 0.65 range on desktop
+    uSizeScale: { value: 1.0 },
     uPointer: { value: new THREE.Vector2(0, 0) },
     uMouseReact: { value: 1.0 },
     uAtlas: { value: atlasTex },
@@ -162,6 +164,7 @@ export function buildAmbientParticleField(
       attribute float aSize;
 
       uniform float uTime;
+      uniform float uSizeScale;
       uniform vec2 uPointer;
       uniform float uMouseReact;
 
@@ -191,9 +194,9 @@ export function buildAmbientParticleField(
           pos.y -= uPointer.y * 0.26 * uMouseReact;
         }
 
-        // Camera-facing crisp billboard quad
+        // Camera-facing crisp billboard quad scaled responsively for mobile vs desktop
         vec4 mvCenter = modelViewMatrix * vec4(pos, 1.0);
-        mvCenter.xy += position.xy * aSize;
+        mvCenter.xy += position.xy * (aSize * uSizeScale);
 
         // 4x4 glyph atlas cell UV
         float col = mod(aGlyph, 4.0);

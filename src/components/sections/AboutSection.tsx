@@ -21,35 +21,34 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
   return (
     <section
       id="about"
-      className="relative flex min-h-[125vh] items-center py-24"
+      className="relative flex items-center py-14 sm:min-h-[110vh] sm:py-24"
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Left-anchored panel so the right/center showcases the Phase 2 CAD Wireframe M5 */}
-        <div className="m5-card max-w-xl rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-4">
+        <div className="m5-card max-w-xl rounded-2xl p-5 sm:p-8 space-y-5 sm:space-y-6">
+          <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
               {profile.avatarUrl && !avatarFailed ? (
                 <img
                   src={profile.avatarUrl}
                   alt={`Аватар ${profile.name}`}
                   referrerPolicy="no-referrer"
                   onError={() => setAvatarFailed(true)}
-                  className="h-14 w-14 rounded-xl border border-white/15 object-cover shrink-0"
+                  className="h-12 w-12 rounded-xl border border-white/15 object-cover shrink-0 sm:h-14 sm:w-14"
                 />
               ) : (
                 <div
                   aria-hidden="true"
-                  className="flex h-14 w-14 items-center justify-center rounded-xl border border-[#38BDF8]/30 bg-[#004282]/40 font-display text-lg font-bold text-[#38BDF8] shrink-0"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#38BDF8]/30 bg-[#004282]/40 font-display text-base font-bold text-[#38BDF8] shrink-0 sm:h-14 sm:w-14 sm:text-lg"
                 >
                   {initials}
                 </div>
               )}
 
-              <div>
-                <p className="font-mono text-xs text-[#38BDF8]">
+              <div className="min-w-0">
+                <p className="font-mono text-[11px] text-[#38BDF8] truncate sm:text-xs">
                   01. About · github.com/{profile.login}
                 </p>
-                <h2 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-3xl">
                   Обо мне и опыт
                 </h2>
               </div>
@@ -60,7 +59,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
               target="_blank"
               rel="noreferrer"
               aria-label={`Открыть профиль GitHub ${profile.login}`}
-              className="inline-flex items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5 font-mono text-xs text-slate-300 whitespace-nowrap shrink-0 transition-colors hover:border-[#38BDF8]/60 hover:text-white"
+              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5 font-mono text-xs text-slate-300 whitespace-nowrap shrink-0 transition-colors hover:border-[#38BDF8]/60 hover:text-white"
             >
               <span>GitHub</span>
               <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />

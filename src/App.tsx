@@ -255,7 +255,11 @@ export default function App() {
           introPlaying ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
       >
-        <Navbar activeSection={activeSection} onNavigate={scrollToSection} />
+        <Navbar
+          activeSection={activeSection}
+          onNavigate={scrollToSection}
+          onReplayIntro={handleReplayIntro}
+        />
       </div>
 
       {/* Portfolio Content Sections (smooth entrance as intro dissolves) */}
@@ -282,16 +286,16 @@ export default function App() {
           loading={githubLoading}
         />
 
-        <ContactSection />
+        <ContactSection onReplayIntro={handleReplayIntro} />
       </main>
 
-      {/* Discreet "Replay Intro" Mini-Button in Bottom-Right After Intro Finishes */}
+      {/* Desktop Discreet "Replay Intro" Mini-Button (on mobile, lives cleanly inside Navbar menu & Contact footer) */}
       {introPhase === "done" && (
         <button
           type="button"
           onClick={handleReplayIntro}
           data-testid="replay-intro-btn"
-          className="fixed bottom-5 right-5 z-30 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#04060A]/75 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-colors hover:border-[#38BDF8]/50 hover:text-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8]"
+          className="fixed bottom-5 right-5 z-30 hidden items-center gap-1.5 rounded-lg border border-white/10 bg-[#04060A]/80 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-colors hover:border-[#38BDF8]/50 hover:text-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] md:inline-flex"
           title="Повторить видео-интро BMW M5 F90"
         >
           <RotateCcw className="h-3 w-3 text-[#38BDF8]" aria-hidden="true" />
