@@ -12,7 +12,10 @@ for (const name of ["favicon.svg", ".nojekyll"]) {
 }
 
 const next = new Set(await readdir("dist/assets"));
-await cp("dist/assets", "assets", { recursive: true });
+for (const entry of next) {
+  if (entry === "aistudio") continue;
+  await cp(join("dist/assets", entry), join("assets", entry), { recursive: true });
+}
 try {
   await cp("dist/videos", "videos", { recursive: true });
 } catch {
