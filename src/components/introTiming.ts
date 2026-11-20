@@ -2,7 +2,7 @@
 export const INTRO_START_TIME = 0;
 
 /** End timestamp in seconds at which the intro smoothly fades out and unmounts */
-export const INTRO_END_TIME = 4.5;
+export const INTRO_END_TIME = 7.0;
 
 /** Native 1.0x playback speed without frame jitter */
 export const INTRO_PLAYBACK_RATE = 1.0;
@@ -10,7 +10,7 @@ export const INTRO_PLAYBACK_RATE = 1.0;
 /** Smooth opacity-only fade-out duration in milliseconds */
 export const INTRO_FADE_DURATION_MS = 500;
 
-export const INTRO_VIDEO_SRC = "/videos/m5_intro_1080p.mp4";
+export const INTRO_VIDEO_SRC = "/videos/m5_intro_v2_1080p.mp4";
 export const INTRO_SEEN_STORAGE_KEY = "m5_f90_intro_seen";
 
 /**
