@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Syne", sans-serif;
+  --font-sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-obsidian: #04060A;
+  --color-panel: #0B0F17;
+  --color-mcb: #004282;
+  --color-mcb-mid: #0052A5;
+  --color-mcb-electric: #1E90FF;
+  --color-mcb-cyan: #38BDF8;
+}
+
+@layer base {
+  html {
+    background-color: #04060A;
+    color: #F1F5F9;
+    font-family: var(--font-sans);
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #04060A;
+    overflow-x: hidden;
+  }
+
+  /* Respect dark-mode optical legibility & crisp numerals */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Custom subtle dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #04060A;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.25);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(30, 144, 255, 0.5);
+  }
+}
+
+/* Glass card surface — backdrop-blur enabled only on GPU devices to avoid SwiftShader stalls */
+.m5-card {
+  background: rgba(11, 15, 23, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+html.gpu-blur .m5-card {
+  background: rgba(11, 15, 23, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.m5-bar {
+  background: rgba(4, 6, 10, 0.88);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+html.gpu-blur .m5-bar {
+  background: rgba(4, 6, 10, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Ultra-thin edge vignette strictly along the outer 10% border without touching the center */
+.m5-intro-vignette {
+  background: radial-gradient(
+    ellipse 92% 90% at 50% 50%,
+    rgba(0, 0, 0, 0) 84%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+}

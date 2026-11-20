@@ -2,13 +2,14 @@ import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-// The tracked index.html belongs to Pages. Dev always serves the source template.
 function showroomEntry(): Plugin {
   return {
     name: "showroom-html-entry",
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
-        if (req.url) req.url = req.url.replace(/^\/(?:index\.html)?(?=\?|$)/, "/index.dev.html");
+        if (req.url) {
+          req.url = req.url.replace(/^\/(?:index\.html)?(?=\?|$)/, "/index.dev.html");
+        }
         next();
       });
     },
@@ -17,7 +18,7 @@ function showroomEntry(): Plugin {
 
 export default defineConfig({
   plugins: [showroomEntry(), react(), tailwindcss()],
-  server: { host: "0.0.0.0", allowedHosts: true },
+  server: { host: "0.0.0.0", port: 3000, allowedHosts: true },
   build: {
     rollupOptions: {
       input: { index: "index.dev.html" },
