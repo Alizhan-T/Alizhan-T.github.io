@@ -55,7 +55,7 @@ export function HeroSection({
               onClick={onScrollToProjects}
               className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-[#0052A5] px-5 py-3 text-sm font-medium text-white whitespace-nowrap shrink-0 transition-colors hover:bg-[#1E90FF] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] sm:w-auto"
             >
-              <span>Смотреть проекты</span>
+              <span>View Projects</span>
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </button>
 
@@ -64,7 +64,7 @@ export function HeroSection({
               onClick={onScrollToAbout}
               className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.05] px-5 py-3 text-sm font-medium text-slate-200 whitespace-nowrap shrink-0 transition-colors hover:border-[#38BDF8]/60 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] sm:w-auto"
             >
-              <span>Обо мне и стеке</span>
+              <span>About &amp; Stack</span>
               <ArrowDown className="h-4 w-4 text-[#38BDF8]" aria-hidden="true" />
             </button>
           </div>

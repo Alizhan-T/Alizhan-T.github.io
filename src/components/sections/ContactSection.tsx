@@ -42,11 +42,12 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
             <div className="max-w-xl space-y-3">
               <p className="font-mono text-xs text-[#38BDF8]">04. Contact</p>
               <h2 className="font-display text-2xl font-bold tracking-tight text-white text-balance sm:text-4xl">
-                Обсудить проект или команду
+                Let&apos;s build together
               </h2>
               <p className="text-sm leading-relaxed text-slate-300">
-                Открыт к задачам по iOS (SwiftUI), кроссплатформенной мобильной разработке
-                (Flutter), Full-Stack, Web3 и креативным 3D/WebGL продуктам.
+                Open to engineering opportunities across iOS (SwiftUI),
+                cross-platform mobile (Flutter), Full-Stack, Web3, AI/CV, and
+                interactive 3D/WebGL products.
               </p>
             </div>
 
@@ -61,7 +62,7 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
                   {copied ? (
                     <>
                       <Check className="h-3.5 w-3.5 text-sky-200" aria-hidden="true" />
-                      <span>Скопировано: {CONTACT_LINKS.email}</span>
+                      <span>Copied: {CONTACT_LINKS.email}</span>
                     </>
                   ) : (
                     <>

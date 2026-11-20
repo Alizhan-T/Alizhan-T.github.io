@@ -39,7 +39,7 @@ export interface GitHubPortfolioData {
   projects: PortfolioProject[];
 }
 
-const CACHE_KEY = "m5_f90_github_cache_v1";
+const CACHE_KEY = "m5_f90_github_cache_v2";
 const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
 
 const FALLBACK_REPOS: GitHubRepoRaw[] = [
@@ -47,7 +47,7 @@ const FALLBACK_REPOS: GitHubRepoRaw[] = [
     id: 1001,
     name: "FireWatch-AI",
     description:
-      "Мониторинг камер Казахстана на карте, HLS-видеопотоки на iPhone и детекция огня и дыма в реальном времени на YOLOv8 + FastAPI.",
+      "Kazakhstan camera map monitoring, live HLS streaming on iPhone, and real-time fire & smoke detection powered by YOLOv8 + FastAPI.",
     html_url: "https://github.com/Alizhan-T/FireWatch-AI",
     homepage: null,
     language: "Swift",
@@ -62,7 +62,7 @@ const FALLBACK_REPOS: GitHubRepoRaw[] = [
     id: 1002,
     name: "Memechain",
     description:
-      "Web3-платформа и смарт-контракты на Solidity для токенизации, минтинга и on-chain торговли мем-активами.",
+      "Web3 platform and Solidity smart contracts for tokenizing, minting, and trading meme assets on-chain.",
     html_url: "https://github.com/Alizhan-T/Memechain",
     homepage: null,
     language: "Solidity",
@@ -77,7 +77,7 @@ const FALLBACK_REPOS: GitHubRepoRaw[] = [
     id: 1003,
     name: "OYU-Travel",
     description:
-      "Мобильное приложение для путешествий по Казахстану: авторские маршруты, интерактивная карта локаций и офлайн-гид.",
+      "Cross-platform travel app for exploring Kazakhstan with curated routes, interactive location maps, and an offline guide.",
     html_url: "https://github.com/Alizhan-T/OYU-Travel",
     homepage: null,
     language: "Dart",
@@ -92,7 +92,7 @@ const FALLBACK_REPOS: GitHubRepoRaw[] = [
     id: 1004,
     name: "KitchenApp",
     description:
-      "Нативное iOS-приложение поиска рецептов с офлайн-избранным на Core Data, архитектурой MVVM и live-обсуждением блюд в Firebase.",
+      "Native iOS recipe discovery app with offline Core Data favorites, MVVM architecture, and live dish discussions in Firebase.",
     html_url: "https://github.com/Alizhan-T/KitchenApp",
     homepage: null,
     language: "Swift",
@@ -107,7 +107,7 @@ const FALLBACK_REPOS: GitHubRepoRaw[] = [
     id: 1005,
     name: "MultiverseWiki",
     description:
-      "Нативный iOS-справочник по вселенной Рика и Морти: асинхронная загрузка API, поиск персонажей и офлайн-коллекция.",
+      "Native iOS Rick & Morty explorer featuring async API fetching, character search, and an offline collection.",
     html_url: "https://github.com/Alizhan-T/MultiverseWiki",
     homepage: null,
     language: "Swift",
@@ -122,7 +122,7 @@ const FALLBACK_REPOS: GitHubRepoRaw[] = [
     id: 1006,
     name: "alizhmarket",
     description:
-      "Full-stack веб-маркетплейс фермерских продуктов: личный кабинет поставщиков, каталог, корзина и оформление заказов.",
+      "Full-stack farm-to-buyer web marketplace with vendor dashboards, product catalog, cart, and order workflow.",
     html_url: "https://github.com/Alizhan-T/alizhmarket",
     homepage: null,
     language: "TypeScript",
@@ -147,7 +147,7 @@ export function createFallbackPortfolioData(): GitHubPortfolioData {
       login: GITHUB_USERNAME,
       name: "Alizhan Toleukhan",
       avatarUrl: null,
-      bio: "iOS, Flutter, Full-Stack & Web3 Engineer. Проектирую нативные мобильные продукты, компьютерное зрение на YOLOv8/FastAPI и интерактивные WebGL-интерфейсы.",
+      bio: "iOS, Flutter, Full-Stack & Web3 Engineer. Building native mobile products, YOLOv8/FastAPI computer vision pipelines, and interactive WebGL interfaces.",
       location: "Astana, Kazakhstan",
       education: "Astana IT University · Software Engineering",
       publicRepos: 24,
@@ -159,12 +159,12 @@ export function createFallbackPortfolioData(): GitHubPortfolioData {
     readme: {
       headline: "Alizhan Toleukhan — Mobile, Full-Stack & Web3 Engineer",
       summary:
-        "Студент Astana IT University. Создаю нативные iOS-приложения на SwiftUI, кроссплатформенные продукты на Flutter, CV-пайплайны на Python/FastAPI и смарт-контракты на Solidity.",
+        "Software Engineering student at Astana IT University. Building native iOS apps in SwiftUI, cross-platform Flutter products, Python/FastAPI CV pipelines, and Solidity smart contracts.",
       highlights: [
-        "Разработка нативных iOS-приложений (SwiftUI, MVVM, Core Data, MapKit, AVPlayer)",
-        "Кроссплатформенный mobile (Flutter/Dart) и full-stack веб (TypeScript, React, Node.js, Three.js)",
-        "Интеграция Computer Vision (YOLOv8, FastAPI) и Web3 смарт-контрактов (Solidity)",
-        "Инженерный фокус на 60 FPS плавности, чистой архитектуре и визуальной точности",
+        "Native iOS engineering (SwiftUI, MVVM, Core Data, MapKit, AVPlayer)",
+        "Cross-platform mobile (Flutter/Dart) & full-stack web (TypeScript, React, Node.js, Three.js)",
+        "Computer Vision pipelines (YOLOv8, FastAPI) & Web3 smart contracts (Solidity)",
+        "Focused on 60 FPS responsiveness, clean architecture, and visual precision",
       ],
       skills: [
         "Swift",

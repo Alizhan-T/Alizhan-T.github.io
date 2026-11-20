@@ -73,7 +73,7 @@ const FEATURED_PATTERNS: ReadonlyArray<{
     boost: 100,
     category: "AI & Vision",
     fallbackDesc:
-      "Мониторинг камер Казахстана на карте, HLS-видеопотоки на iPhone и серверный детектор огня и дыма на YOLOv8 + FastAPI.",
+      "Kazakhstan camera map monitoring, live HLS streaming on iPhone, and real-time fire & smoke detection powered by YOLOv8 + FastAPI.",
     extraTags: ["SwiftUI", "FastAPI", "YOLOv8", "MapKit", "AVPlayer"],
   },
   {
@@ -81,7 +81,7 @@ const FEATURED_PATTERNS: ReadonlyArray<{
     boost: 95,
     category: "Web3 & Blockchain",
     fallbackDesc:
-      "Децентрализованная Web3-платформа и смарт-контракты для создания, минтинга и обмена мем-активами в блокчейне.",
+      "Decentralized Web3 platform and smart contracts for tokenizing, minting, and trading meme assets on-chain.",
     extraTags: ["Solidity", "Web3", "Smart Contracts", "TypeScript"],
   },
   {
@@ -89,7 +89,7 @@ const FEATURED_PATTERNS: ReadonlyArray<{
     boost: 92,
     category: "Mobile (iOS / Flutter)",
     fallbackDesc:
-      "Мобильный сервис для путешествий по Казахстану: маршруты, интерактивные точки, гиды и кроссплатформенный UX.",
+      "Cross-platform travel app for Kazakhstan featuring curated routes, interactive waypoints, and offline guides.",
     extraTags: ["Flutter", "Dart", "Maps", "Mobile"],
   },
   {
@@ -97,7 +97,7 @@ const FEATURED_PATTERNS: ReadonlyArray<{
     boost: 84,
     category: "Mobile (iOS / Flutter)",
     fallbackDesc:
-      "Нативное iOS-приложение рецептов с офлайн-избранным на Core Data, архитектурой MVVM и обсуждением блюд в реальном времени.",
+      "Native iOS recipe app with offline Core Data favorites, MVVM architecture, and real-time community dish discussions.",
     extraTags: ["SwiftUI", "MVVM", "Core Data", "Firebase"],
   },
   {
@@ -105,7 +105,7 @@ const FEATURED_PATTERNS: ReadonlyArray<{
     boost: 78,
     category: "Mobile (iOS / Flutter)",
     fallbackDesc:
-      "Нативный iOS-справочник по вселенной Рика и Морти с мгновенным поиском, кэшированием и офлайн-режимом.",
+      "Native iOS Rick & Morty encyclopedia with instant search, local caching, and offline browsing.",
     extraTags: ["SwiftUI", "Core Data", "URLSession", "MVVM"],
   },
   {
@@ -113,7 +113,7 @@ const FEATURED_PATTERNS: ReadonlyArray<{
     boost: 75,
     category: "Full-Stack Web",
     fallbackDesc:
-      "Full-stack маркетплейс фермерских продуктов: управление каталогом, корзина и обработка заказов.",
+      "Full-stack farm-to-buyer marketplace with catalog management, cart, and order processing.",
     extraTags: ["Node.js", "Express", "MongoDB", "REST API"],
   },
 ];
@@ -304,7 +304,7 @@ export function rankAndFilterRepos(
       description:
         repo.description?.trim() ||
         matched?.fallbackDesc ||
-        `Инженерный проект на ${repo.language ?? "современном стеке"} в репозитории ${repo.name}.`,
+        `Engineering project built with ${repo.language ?? "a modern stack"} in the ${repo.name} repository.`,
       category,
       language: repo.language ?? "Multi-Stack",
       stars: repo.stargazers_count,

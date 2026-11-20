@@ -30,7 +30,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
               {profile.avatarUrl && !avatarFailed ? (
                 <img
                   src={profile.avatarUrl}
-                  alt={`Аватар ${profile.name}`}
+                  alt={`${profile.name} avatar`}
                   referrerPolicy="no-referrer"
                   onError={() => setAvatarFailed(true)}
                   className="h-12 w-12 rounded-xl border border-white/15 object-cover shrink-0 sm:h-14 sm:w-14"
@@ -49,7 +49,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
                   01. About · github.com/{profile.login}
                 </p>
                 <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-3xl">
-                  Обо мне и опыт
+                  About &amp; Experience
                 </h2>
               </div>
             </div>
@@ -58,7 +58,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
               href={profile.profileUrl}
               target="_blank"
               rel="noreferrer"
-              aria-label={`Открыть профиль GitHub ${profile.login}`}
+              aria-label={`Open GitHub profile ${profile.login}`}
               className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5 font-mono text-xs text-slate-300 whitespace-nowrap shrink-0 transition-colors hover:border-[#38BDF8]/60 hover:text-white"
             >
               <span>GitHub</span>
@@ -99,7 +99,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
           {/* Parsed README Highlights */}
           <div className="space-y-2.5">
             <h3 className="font-mono text-xs text-slate-400">
-              Инженерный фокус (README.md)
+              Engineering Focus
             </h3>
             <ul className="space-y-2 text-sm text-slate-300">
               {readme.highlights.map((item, idx) => (
@@ -114,11 +114,23 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
             </ul>
           </div>
 
+          {/* P2P Trading & Crypto Markets — concise, practical experience alongside engineering */}
+          <div className="space-y-1.5 border-t border-white/10 pt-4">
+            <h3 className="font-mono text-xs text-[#38BDF8]">
+              P2P Trading &amp; Crypto
+            </h3>
+            <p className="text-sm leading-relaxed text-slate-300">
+              Hands-on experience in P2P crypto markets and USDT liquidity
+              operations — focused on operational discipline, market analytics,
+              and risk management.
+            </p>
+          </div>
+
           {/* Language Distribution computed from GitHub repos */}
           {languages.length > 0 && (
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-2.5 border-t border-white/10 pt-4">
               <div className="flex items-center justify-between font-mono text-xs text-slate-400">
-                <span>Языки в репозиториях</span>
+                <span>Repository Languages</span>
                 <span>
                   {data.source === "live"
                     ? "GitHub API"

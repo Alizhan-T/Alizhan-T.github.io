@@ -108,3 +108,9 @@ html.gpu-blur .m5-bar {
     rgba(0, 0, 0, 0.72) 100%
   );
 }
+
+/* 3D Coverflow helper ensuring children preserve 3D transform space */
+.preserve-3d {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}

@@ -296,7 +296,7 @@ export default function App() {
           onClick={handleReplayIntro}
           data-testid="replay-intro-btn"
           className="fixed bottom-5 right-5 z-30 hidden items-center gap-1.5 rounded-lg border border-white/10 bg-[#04060A]/80 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-colors hover:border-[#38BDF8]/50 hover:text-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] md:inline-flex"
-          title="Повторить видео-интро BMW M5 F90"
+          title="Replay BMW M5 F90 intro video"
         >
           <RotateCcw className="h-3 w-3 text-[#38BDF8]" aria-hidden="true" />
           <span>Replay Intro</span>

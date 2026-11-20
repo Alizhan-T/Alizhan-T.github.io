@@ -42,13 +42,13 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                 03. Selected Works · GitHub Alizhan-T
               </p>
               <h2 className="font-display text-2xl font-bold tracking-tight text-white sm:text-4xl">
-                Ключевые проекты
+                Selected Projects
               </h2>
             </div>
 
             <div
               role="tablist"
-              aria-label="Фильтр проектов по направлению"
+              aria-label="Filter projects by discipline"
               className="no-scrollbar flex w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-lg border border-white/10 bg-white/[0.03] p-1 sm:w-fit sm:flex-wrap"
             >
               {FILTERS.map((item) => {
@@ -76,17 +76,17 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
           {/* Loading State */}
           {loading && filtered.length === 0 ? (
             <div className="m5-card rounded-2xl p-6 font-mono text-sm text-slate-400 sm:p-8">
-              Загрузка репозиториев Alizhan-T из GitHub API...
+              Loading Alizhan-T repositories from GitHub API...
             </div>
           ) : filtered.length === 0 ? (
             <div className="m5-card rounded-2xl p-6 text-sm text-slate-400 sm:p-8">
-              В выбранной категории пока нет публичных репозиториев.{" "}
+              No public repositories in this category yet.{" "}
               <button
                 type="button"
                 onClick={() => setFilter("All")}
                 className="text-[#38BDF8] underline underline-offset-4 hover:text-white"
               >
-                Показать все проекты
+                Show all projects
               </button>
             </div>
           ) : (
@@ -155,7 +155,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                         href={project.repoUrl}
                         target="_blank"
                         rel="noreferrer"
-                        aria-label={`Открыть код ${project.name} на GitHub`}
+                        aria-label={`View ${project.name} source code on GitHub`}
                         className="inline-flex items-center gap-1 font-mono text-xs text-slate-200 whitespace-nowrap transition-colors hover:text-[#38BDF8]"
                       >
                         <span>Code</span>

@@ -49,7 +49,7 @@ export function Navbar({
 
         {/* Zone 2: Desktop 5 Concise Single-Line Navigation Links */}
         <nav
-          aria-label="Основная навигация"
+          aria-label="Primary navigation"
           className="hidden md:flex items-center gap-7"
         >
           {NAV_ITEMS.map((item) => {
@@ -93,7 +93,7 @@ export function Navbar({
             }}
             className="hidden md:inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-medium text-slate-100 whitespace-nowrap shrink-0 transition-colors hover:border-[#38BDF8]/60 hover:bg-[#0052A5]/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8]"
           >
-            <span>Связаться</span>
+            <span>Get in Touch</span>
             <ArrowUpRight className="h-3.5 w-3.5 text-[#38BDF8]" aria-hidden="true" />
           </a>
 
@@ -101,7 +101,7 @@ export function Navbar({
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
             aria-expanded={mobileOpen}
-            aria-label={mobileOpen ? "Закрыть меню" : "Открыть меню"}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-slate-200 transition-colors hover:border-[#38BDF8]/60 hover:text-white md:hidden"
           >
             {mobileOpen ? (
@@ -116,7 +116,7 @@ export function Navbar({
       {/* Mobile Collapsible Navigation Drawer */}
       {mobileOpen && (
         <nav
-          aria-label="Мобильная навигация"
+          aria-label="Mobile navigation"
           className="border-t border-white/10 bg-[#04060A]/95 px-4 pb-4 pt-2 md:hidden"
         >
           <div className="flex flex-col divide-y divide-white/5">
