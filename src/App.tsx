@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RotateCcw } from "lucide-react";
 import { applyGpuSurfaceClass } from "./three/glCaps";
 import AmbientCodeParticles from "./three/AmbientCodeParticles";
-import { IntroVideoOverlay } from "./components/IntroVideoOverlay";
+import { IntroOverlay } from "./components/IntroOverlay";
 import {
   INTRO_FADE_DURATION_MS,
   INTRO_SEEN_STORAGE_KEY,
@@ -242,7 +242,7 @@ export default function App() {
 
       {/* Fullscreen Short Video Intro Overlay (pure quality on #000000, unmounts completely after 500ms fade) */}
       {introMounted && (
-        <IntroVideoOverlay
+        <IntroOverlay
           fading={introPhase === "fading"}
           replayKey={replayKey}
           onBeginFade={beginIntroFade}

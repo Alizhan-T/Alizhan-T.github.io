@@ -21,6 +21,11 @@ try {
 } catch {
   // Optional videos folder
 }
+try {
+  await cp("dist/models", "models", { recursive: true });
+} catch {
+  // Optional 3D models folder (public/models/m5_f90.glb)
+}
 await copyFile("dist/index.html", "index.html.next");
 await rename("index.html.next", "index.html");
 
