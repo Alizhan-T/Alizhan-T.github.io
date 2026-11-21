@@ -251,7 +251,7 @@ export default function App() {
 
       {/* Minimalist 3-Zone Top Navigation Bar */}
       <div
-        className={`transition-opacity duration-700 ${
+        className={`transition-opacity duration-[1400ms] delay-300 ${
           introPlaying ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
       >
@@ -264,9 +264,9 @@ export default function App() {
 
       {/* Portfolio Content Sections (smooth entrance as intro dissolves) */}
       <main
-        className={`relative z-10 transition-all duration-700 ${
+        className={`relative z-10 transition-all duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           introPlaying
-            ? "pointer-events-none translate-y-4 opacity-0"
+            ? "pointer-events-none translate-y-6 opacity-0"
             : "translate-y-0 opacity-100"
         }`}
       >

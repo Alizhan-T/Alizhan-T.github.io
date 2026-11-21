@@ -91,7 +91,7 @@ export function IntroVideoOverlay({
     <div
       data-testid="intro-video-overlay"
       data-intro-fading={fading ? "true" : "false"}
-      className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#04060A] transition-opacity duration-500 ease-out ${
+      className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#04060A] transition-opacity duration-[1400ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
         fading ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >

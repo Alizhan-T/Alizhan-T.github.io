@@ -12,7 +12,7 @@ test("intro cut constants match exact user specification", () => {
   assert.equal(INTRO_START_TIME, 0);
   assert.equal(INTRO_END_TIME, 4.5);
   assert.equal(INTRO_PLAYBACK_RATE, 1.0);
-  assert.equal(INTRO_FADE_DURATION_MS, 500);
+  assert.equal(INTRO_FADE_DURATION_MS, 1400);
 });
 
 test("hasReachedIntroEnd triggers cleanly at INTRO_END_TIME = 4.5s", () => {

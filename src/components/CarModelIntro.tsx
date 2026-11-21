@@ -418,7 +418,8 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
 
         const k = reduced ? 0.55 : 1;
         const D = MODEL_INTRO_DURATION * k;
-        const tl = gsap.timeline({ onComplete: requestFade });
+        const tl = gsap.timeline();
+        tl.call(requestFade, [], (MODEL_INTRO_DURATION - 0.8) * k);
         // 1) vortex of code, camera drifts in
         tl.to(rig, { angle: 0.32, radius: 6.4, height: 0.9, duration: 4.6 * k, ease: "sine.inOut" }, 0)
           .to(rig, { lookY: carH * 0.45 }, 0)
@@ -504,7 +505,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
     <div
       data-testid="intro-model-overlay"
       data-intro-fading={fading ? "true" : "false"}
-      className={`fixed inset-0 z-50 overflow-hidden bg-[#04060A] transition-opacity duration-500 ease-out ${
+      className={`fixed inset-0 z-50 overflow-hidden bg-[#04060A] transition-opacity duration-[1400ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
         fading ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
