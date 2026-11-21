@@ -21,13 +21,13 @@ export const CAR_LENGTH_M = 4.97;
  * Допустимо: "+z" | "-z" | "+x" | "-x". Можно переопределить через ?front=-z
  */
 export type FrontAxis = "+z" | "-z" | "+x" | "-x";
-export const MODEL_FRONT_AXIS: FrontAxis = "+z";
+export const MODEL_FRONT_AXIS: FrontAxis = "+x";
 
 /** Полная длительность интро в секундах */
 export const MODEL_INTRO_DURATION = 9.2;
 
 /** Имена материалов, которые считаются передней оптикой (подсвечиваются при включении) */
-export const HEADLIGHT_MATERIAL_RE = /head|lamp|led|drl|light_f|front_?light/i;
+export const HEADLIGHT_MATERIAL_RE = /LightEmissive|head|lamp|drl|^material_95$/i;
 export const REAR_LIGHT_MATERIAL_RE = /tail|rear|brake|back/i;
 
 export async function isModelAvailable(url = MODEL_URL): Promise<boolean> {
@@ -40,3 +40,13 @@ export async function isModelAvailable(url = MODEL_URL): Promise<boolean> {
     return false;
   }
 }
+
+/** Атрибуция модели (лицензия CC-BY-4.0 требует указать автора) */
+export const MODEL_CREDIT = {
+  title: "BMW M5 F90",
+  author: "RES1N",
+  authorUrl: "https://sketchfab.com/Resinnnn",
+  sourceUrl: "https://sketchfab.com/3d-models/bmw-m5-f90-5478e978bd634337adc8e3dc413fbfa3",
+  license: "CC BY 4.0",
+  licenseUrl: "http://creativecommons.org/licenses/by/4.0/",
+};

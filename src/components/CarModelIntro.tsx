@@ -51,11 +51,12 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
 
     (async () => {
       try {
-        const [THREE, { GLTFLoader }, { DRACOLoader }, { RoomEnvironment }, { RGBELoader }, gsapMod] =
+        const [THREE, { GLTFLoader }, { DRACOLoader }, { MeshoptDecoder }, { RoomEnvironment }, { RGBELoader }, gsapMod] =
           await Promise.all([
             import("three"),
             import("three/examples/jsm/loaders/GLTFLoader.js"),
             import("three/examples/jsm/loaders/DRACOLoader.js"),
+            import("three/examples/jsm/libs/meshopt_decoder.module.js"),
             import("three/examples/jsm/environments/RoomEnvironment.js"),
             import("three/examples/jsm/loaders/RGBELoader.js"),
             import("gsap"),
@@ -105,8 +106,8 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
             color: 0x010203,
             roughness: 0.4,
             metalness: 0.0,
-            specularIntensity: 0.08,
-            clearcoat: 0.35,
+            specularIntensity: 0.02,
+            clearcoat: 0.0,
             clearcoatRoughness: 0.35,
             envMapIntensity: 0.08,
           }),
@@ -123,10 +124,10 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         key.shadow.radius = 8;
         key.shadow.bias = -0.0002;
         scene.add(key, key.target);
-        const rimL = new THREE.SpotLight(0x4aa8ff, 0, 25, 0.6, 1, 1.5);
-        rimL.position.set(6, 3, -5);
-        const rimR = new THREE.SpotLight(0x8ac4ff, 0, 25, 0.6, 1, 1.5);
-        rimR.position.set(-6, 3, -5);
+        const rimL = new THREE.SpotLight(0x4aa8ff, 0, 25, 0.35, 1, 1.5);
+        rimL.position.set(6, 3.5, -5);
+        const rimR = new THREE.SpotLight(0x8ac4ff, 0, 25, 0.35, 1, 1.5);
+        rimR.position.set(-6, 3.5, -5);
         scene.add(rimL, rimL.target, rimR, rimR.target);
 
         // --- Load model ---
@@ -134,9 +135,21 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         const draco = new DRACOLoader();
         draco.setDecoderPath(DRACO_PATH);
         loader.setDRACOLoader(draco);
+        loader.setMeshoptDecoder(MeshoptDecoder);
         const gltf = await loader.loadAsync(MODEL_URL);
         if (disposed) return;
 
+        // drop degenerate helper geometry (zero-volume lines/points) that would distort framing
+        gltf.scene.updateMatrixWorld(true);
+        const junk: THREE.Object3D[] = [];
+        gltf.scene.traverse((o) => {
+          const m = o as THREE.Mesh;
+          if (!m.isMesh) return;
+          const sz = new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3());
+          const flat = [sz.x, sz.y, sz.z].filter((v) => v < 0.002).length;
+          if (flat >= 2) junk.push(o);
+        });
+        junk.forEach((o) => o.parent?.remove(o));
         const car = new THREE.Group();
         const model = gltf.scene;
         car.add(model);
@@ -164,10 +177,10 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
           for (const m of mats) {
             const sm = m as THREE.MeshStandardMaterial;
             if (!sm.isMeshStandardMaterial) continue;
-            sm.envMapIntensity = 1.2;
+            sm.envMapIntensity = 1.0;
             const name = `${sm.name} ${mesh.name}`;
             if (HEADLIGHT_MATERIAL_RE.test(name) && !REAR_LIGHT_MATERIAL_RE.test(name)) {
-              sm.emissive = new THREE.Color(0xdcecff);
+              if (sm.emissive.getHex() === 0) sm.emissive = new THREE.Color(0xdcecff);
               sm.emissiveIntensity = 0;
               headMats.push(sm);
             }
@@ -199,10 +212,10 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         const apply = () => {
           renderer.toneMappingExposure = state.exposure;
           scene.environmentIntensity = state.env;
-          for (const m of headMats) m.emissiveIntensity = state.lights * 6;
-          for (const b of beams) b.intensity = state.lights * 40;
-          key.intensity = state.key * 55;
-          rimL.intensity = rimR.intensity = state.rim * 30;
+          for (const m of headMats) m.emissiveIntensity = state.lights * 4;
+          for (const b of beams) b.intensity = state.lights * 12;
+          key.intensity = state.key * 40;
+          rimL.intensity = rimR.intensity = state.rim * 20;
         };
 
         const D = MODEL_INTRO_DURATION / speed;
@@ -213,7 +226,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
           .to(state, { lights: 1, duration: 1.1 * k, ease: "power2.inOut" }, 0.5 * k)
           // 3: silhouette emerges from the dark (rim light + environment)
           .to(state, { rim: 1, env: 0.35, duration: 1.8 * k, ease: "sine.inOut" }, 1.4 * k)
-          .to(state, { key: 1, env: 1, exposure: 1.05, duration: 2.2 * k, ease: "sine.inOut" }, 2.4 * k)
+          .to(state, { key: 1, env: 0.75, exposure: 0.95, duration: 2.2 * k, ease: "sine.inOut" }, 2.4 * k)
           // 4: camera glides in to the front
           .to(rig, { radius: 5.4, height: 0.75, lookY: carH * 0.4, duration: 3.4 * k, ease: "power2.inOut" }, 0.4 * k)
           // 5: cinematic fly-around
@@ -233,6 +246,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         }
 
         let raf = 0;
+        if (params.has("t")) tl.pause().progress(Number(params.get("t")));
         const frame = () => {
           apply();
           applyCam();
@@ -292,7 +306,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
       <div ref={hostRef} className="absolute inset-0">
         <div
           ref={titleRef}
-          className="pointer-events-none absolute inset-x-0 bottom-[14%] z-10 text-center opacity-0"
+          className="pointer-events-none absolute inset-x-0 bottom-[7%] z-10 text-center opacity-0"
         >
           <h1 className="font-display text-4xl font-semibold tracking-[0.18em] text-white sm:text-6xl">
             {INTRO_TITLE}

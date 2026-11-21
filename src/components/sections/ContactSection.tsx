@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowUpRight, Check, Copy, Mail, RotateCcw } from "lucide-react";
 import { CONTACT_LINKS } from "../../services/github";
+import { MODEL_CREDIT } from "../modelIntroConfig";
 
 interface ContactSectionProps {
   onReplayIntro: () => void;
@@ -128,6 +129,21 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
               </span>
             </div>
           </footer>
+          <p className="mt-3 font-mono text-[10px] leading-relaxed text-slate-600">
+            3D model “{MODEL_CREDIT.title}” by{" "}
+            <a href={MODEL_CREDIT.authorUrl} target="_blank" rel="noreferrer" className="underline hover:text-[#38BDF8]">
+              {MODEL_CREDIT.author}
+            </a>{" "}
+            (
+            <a href={MODEL_CREDIT.sourceUrl} target="_blank" rel="noreferrer" className="underline hover:text-[#38BDF8]">
+              Sketchfab
+            </a>
+            ), licensed under{" "}
+            <a href={MODEL_CREDIT.licenseUrl} target="_blank" rel="noreferrer" className="underline hover:text-[#38BDF8]">
+              {MODEL_CREDIT.license}
+            </a>
+            .
+          </p>
         </div>
       </div>
     </section>
