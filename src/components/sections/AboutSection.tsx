@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import type { GitHubPortfolioData } from "../../services/github";
+import { useLang } from "../../i18n/LangContext";
 
 interface AboutSectionProps {
   data: GitHubPortfolioData;
@@ -8,6 +9,7 @@ interface AboutSectionProps {
 }
 
 export function AboutSection({ data, loading }: AboutSectionProps) {
+  const { t } = useLang();
   const [avatarFailed, setAvatarFailed] = useState(false);
   const { profile, readme, languages } = data;
 
@@ -46,10 +48,10 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
 
               <div className="min-w-0">
                 <p className="font-mono text-xs text-[#38BDF8] truncate sm:text-[13px]">
-                  01. About · github.com/{profile.login}
+                  {t.about.label} · github.com/{profile.login}
                 </p>
                 <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-3xl">
-                  About &amp; Experience
+                  {t.about.title}
                 </h2>
               </div>
             </div>
@@ -58,7 +60,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
               href={profile.profileUrl}
               target="_blank"
               rel="noreferrer"
-              aria-label={`Open GitHub profile ${profile.login}`}
+              aria-label={`${t.about.openProfile} ${profile.login}`}
               className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5 font-mono text-xs text-slate-300 whitespace-nowrap shrink-0 transition-colors hover:border-[#38BDF8]/60 hover:text-white"
             >
               <span>GitHub</span>
@@ -68,7 +70,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
 
           {/* Profile Bio & README Summary */}
           <div className="space-y-3.5 text-[15px] leading-7 text-slate-300">
-            <p>{readme.summary || profile.bio}</p>
+            <p>{t.about.summary || readme.summary || profile.bio}</p>
             <p className="font-mono text-xs text-slate-400">
               {profile.education} · {profile.location}
             </p>
@@ -80,29 +82,29 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
               <p className="text-xl font-semibold text-white">
                 {loading ? "—" : profile.publicRepos}
               </p>
-              <p className="text-xs text-slate-400">Repositories</p>
+              <p className="text-xs text-slate-400">{t.about.repos}</p>
             </div>
             <div>
               <p className="text-xl font-semibold text-white">
                 {loading ? "—" : profile.totalStars}
               </p>
-              <p className="text-xs text-slate-400">Total Stars</p>
+              <p className="text-xs text-slate-400">{t.about.stars}</p>
             </div>
             <div>
               <p className="text-xl font-semibold text-white">
                 {loading ? "—" : profile.followers}
               </p>
-              <p className="text-xs text-slate-400">Followers</p>
+              <p className="text-xs text-slate-400">{t.about.followers}</p>
             </div>
           </div>
 
           {/* Parsed README Highlights */}
           <div className="space-y-2.5">
             <h3 className="font-mono text-xs text-slate-400">
-              Engineering Focus
+              {t.about.focus}
             </h3>
             <ul className="space-y-2.5 text-[15px] leading-7 text-slate-300">
-              {readme.highlights.map((item, idx) => (
+              {(t.about.highlights.length ? t.about.highlights : readme.highlights).map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2.5">
                   <span
                     aria-hidden="true"
@@ -117,12 +119,10 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
           {/* P2P Trading & Crypto Markets — concise, practical experience alongside engineering */}
           <div className="space-y-1.5 border-t border-white/10 pt-4">
             <h3 className="font-mono text-xs text-[#38BDF8]">
-              P2P Trading &amp; Crypto
+              {t.about.p2pTitle}
             </h3>
             <p className="text-[15px] leading-7 text-slate-300">
-              Hands-on experience in P2P crypto markets and USDT liquidity
-              operations — focused on operational discipline, market analytics,
-              and risk management.
+              {t.about.p2pText}
             </p>
           </div>
 
@@ -130,13 +130,13 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
           {languages.length > 0 && (
             <div className="space-y-2.5 border-t border-white/10 pt-4">
               <div className="flex items-center justify-between font-mono text-xs text-slate-400">
-                <span>Repository Languages</span>
+                <span>{t.about.languages}</span>
                 <span>
                   {data.source === "live"
-                    ? "GitHub API"
+                    ? t.about.live
                     : data.source === "cache"
-                      ? "GitHub Cached"
-                      : "Synced Snapshot"}
+                      ? t.about.cache
+                      : t.about.snapshot}
                 </span>
               </div>
               <div className="space-y-2">

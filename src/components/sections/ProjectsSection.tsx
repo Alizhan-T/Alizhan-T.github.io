@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { ArrowUpRight, GitFork, Star } from "lucide-react";
 import type { PortfolioProject } from "../../services/githubParser";
 import { Reveal } from "../Reveal";
+import { useLang } from "../../i18n/LangContext";
+import { RU_PROJECT_DESCRIPTIONS } from "../../i18n/translations";
 
 type ProjectFilter = "All" | PortfolioProject["category"];
 
@@ -19,7 +21,9 @@ interface ProjectsSectionProps {
 }
 
 export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
+  const { t, lang } = useLang();
   const [filter, setFilter] = useState<ProjectFilter>("All");
+  const catLabel = (c: string) => t.projects.categories[c] ?? (c === "Mobile (iOS / Flutter)" ? "Mobile" : c);
 
   const filtered = useMemo(() => {
     const list =
@@ -40,16 +44,16 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
           <div className="m5-card flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
             <div>
               <p className="font-mono text-xs text-[#38BDF8]">
-                03. Selected Works · GitHub Alizhan-T
+                {t.projects.label}
               </p>
               <h2 className="font-display text-2xl font-bold tracking-tight text-white sm:text-4xl">
-                Selected Projects
+                {t.projects.title}
               </h2>
             </div>
 
             <div
               role="tablist"
-              aria-label="Filter projects by discipline"
+              aria-label={t.projects.filterLabel}
               className="no-scrollbar flex w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-lg border border-white/10 bg-white/[0.03] p-1 sm:w-fit sm:flex-wrap"
             >
               {FILTERS.map((item) => {
@@ -67,7 +71,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                         : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
                     }`}
                   >
-                    {item === "Mobile (iOS / Flutter)" ? "Mobile" : item}
+                    {item === "All" ? t.projects.all : catLabel(item)}
                   </button>
                 );
               })}
@@ -77,17 +81,17 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
           {/* Loading State */}
           {loading && filtered.length === 0 ? (
             <div className="m5-card rounded-2xl p-6 font-mono text-sm text-slate-400 sm:p-8">
-              Loading Alizhan-T repositories from GitHub API...
+              {t.projects.loading}
             </div>
           ) : filtered.length === 0 ? (
             <div className="m5-card rounded-2xl p-6 text-sm text-slate-400 sm:p-8">
-              No public repositories in this category yet.{" "}
+              {t.projects.empty}{" "}
               <button
                 type="button"
                 onClick={() => setFilter("All")}
                 className="text-[#38BDF8] underline underline-offset-4 hover:text-white"
               >
-                Show all projects
+                {t.projects.showAll}
               </button>
             </div>
           ) : (
@@ -107,7 +111,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                     <div className="flex items-center justify-between gap-3 font-mono text-xs text-slate-400 tabular-nums">
                       <span className="truncate">
                         <span className="text-[#38BDF8]">
-                          {project.category === "Mobile (iOS / Flutter)" ? "Mobile" : project.category}
+                          {catLabel(project.category)}
                         </span>
                         <span className="mx-1.5 text-slate-600" aria-hidden="true">
                           ·
@@ -122,7 +126,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                         </span>
                         {project.forks > 0 && (
                           <span className="inline-flex items-center gap-1">
-                            <GitFork className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
+                            <GitFork className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
                             {project.forks}
                           </span>
                         )}
@@ -136,7 +140,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
 
                     {/* Project Description */}
                     <p className="text-[15px] leading-7 text-slate-300">
-                      {project.description}
+                      {(lang === "ru" && RU_PROJECT_DESCRIPTIONS[project.name]) || project.description}
                     </p>
                   </div>
 
@@ -154,7 +158,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                           rel="noreferrer"
                           className="inline-flex items-center gap-1 font-mono text-xs text-[#38BDF8] whitespace-nowrap transition-colors hover:text-white"
                         >
-                          <span>Demo</span>
+                          <span>{t.projects.demo}</span>
                           <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                         </a>
                       )}
@@ -162,10 +166,10 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                         href={project.repoUrl}
                         target="_blank"
                         rel="noreferrer"
-                        aria-label={`View ${project.name} source code on GitHub`}
+                        aria-label={`${project.name}: ${t.projects.viewCode}`}
                         className="inline-flex items-center gap-1 font-mono text-xs text-slate-200 whitespace-nowrap transition-colors hover:text-[#38BDF8]"
                       >
-                        <span>Code</span>
+                        <span>{t.projects.code}</span>
                         <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                       </a>
                     </div>

@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RotateCcw } from "lucide-react";
 import { applyGpuSurfaceClass } from "./three/glCaps";
-import AmbientCodeParticles from "./three/AmbientCodeParticles";
+import { useLang } from "./i18n/LangContext";
 import { IntroOverlay } from "./components/IntroOverlay";
 import { ScrollProgress } from "./components/ScrollProgress";
 import {
@@ -20,9 +20,14 @@ import {
 import { Navbar, NAV_ITEMS } from "./components/Navbar";
 import { HeroSection } from "./components/sections/HeroSection";
 import { AboutSection } from "./components/sections/AboutSection";
-import { StackSection } from "./components/sections/StackSection";
 import { ProjectsSection } from "./components/sections/ProjectsSection";
 import { ContactSection } from "./components/sections/ContactSection";
+
+// Heavy parts load on demand: WebGL code background after the intro, Tech Stack carousel when needed
+const AmbientCodeParticles = lazy(() => import("./three/AmbientCodeParticles"));
+const StackSection = lazy(() =>
+  import("./components/sections/StackSection").then((m) => ({ default: m.StackSection })),
+);
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -48,6 +53,7 @@ function markIntroSeen() {
 }
 
 export default function App() {
+  const { t } = useLang();
   const lenisRef = useRef<Lenis | null>(null);
   const fadeTimerRef = useRef<number | null>(null);
 
@@ -55,11 +61,17 @@ export default function App() {
     resolveInitialIntroPhase(),
   );
   const [replayKey, setReplayKey] = useState(0);
+  const [ambientOn, setAmbientOn] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [githubData, setGithubData] = useState<GitHubPortfolioData>(() =>
     createFallbackPortfolioData(),
   );
   const [githubLoading, setGithubLoading] = useState(true);
+
+  // Start the WebGL code background once the intro hands over (and keep it afterwards)
+  useEffect(() => {
+    if (introPhase !== "playing") setAmbientOn(true);
+  }, [introPhase]);
 
   // Detect GPU vs software WebGL once for surface styling
   useEffect(() => {
@@ -229,8 +241,22 @@ export default function App() {
       className="relative min-h-screen bg-[#04060A] text-slate-100"
       data-intro-phase={introPhase}
     >
+      <a
+        href="#main"
+        onClick={(e) => {
+          e.preventDefault();
+          scrollToSection("about");
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-md focus:bg-[#0052A5] focus:px-4 focus:py-2 focus:text-sm focus:text-white"
+      >
+        {t.skipToContent}
+      </a>
       {/* Persistent Crisp Code-Line Background Layer (always above #04060A, below z-10 content cards) */}
-      <AmbientCodeParticles />
+      {ambientOn && (
+        <Suspense fallback={null}>
+          <AmbientCodeParticles />
+        </Suspense>
+      )}
 
       {/* Fullscreen Short Video Intro Overlay (pure quality on #000000, unmounts completely after 500ms fade) */}
       {introMounted && (
@@ -256,6 +282,7 @@ export default function App() {
 
       {/* Portfolio Content Sections (smooth entrance as intro dissolves) */}
       <main
+        id="main"
         className={`relative z-10 transition-all duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           introPlaying
             ? "pointer-events-none translate-y-6 opacity-0"
@@ -271,7 +298,9 @@ export default function App() {
 
         <AboutSection data={githubData} loading={githubLoading} />
 
-        <StackSection readmeSkills={githubData.readme.skills} />
+        <Suspense fallback={<section id="stack" aria-hidden="true" className="min-h-[78vh] sm:min-h-[88vh]" />}>
+          <StackSection readmeSkills={githubData.readme.skills} />
+        </Suspense>
 
         <ProjectsSection
           projects={githubData.projects}
@@ -290,10 +319,10 @@ export default function App() {
           onClick={handleReplayIntro}
           data-testid="replay-intro-btn"
           className="fixed bottom-5 right-5 z-30 hidden items-center gap-1.5 rounded-lg border border-white/10 bg-[#04060A]/80 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-colors hover:border-[#38BDF8]/50 hover:text-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] md:inline-flex"
-          title="Replay intro video"
+          title={t.nav.replay}
         >
           <RotateCcw className="h-3 w-3 text-[#38BDF8]" aria-hidden="true" />
-          <span>Replay Intro</span>
+          <span>{t.nav.replay}</span>
         </button>
       )}
     </div>

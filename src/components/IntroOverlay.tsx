@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { CarModelIntro } from "./CarModelIntro";
 import { IntroVideoOverlay } from "./IntroVideoOverlay";
 import { isModelAvailable } from "./modelIntroConfig";
+import { useLang } from "../i18n/LangContext";
 
 interface IntroOverlayProps {
   fading: boolean;
@@ -13,6 +14,7 @@ type Mode = "checking" | "model" | "video";
 
 /** Uses the 3D GLB intro when /models/m5_f90.glb exists, otherwise the video intro. */
 export function IntroOverlay(props: IntroOverlayProps) {
+  const { t } = useLang();
   const [mode, setMode] = useState<Mode>("checking");
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export function IntroOverlay(props: IntroOverlayProps) {
         className="fixed inset-0 z-50 flex items-center justify-center bg-[#04060A] font-mono text-xs tracking-[0.35em] text-[#38BDF8]/70"
         aria-hidden="true"
       >
-        <span className="animate-pulse">LOADING</span>
+        <span className="animate-pulse">{t.intro.loading}</span>
       </div>
     );
   }

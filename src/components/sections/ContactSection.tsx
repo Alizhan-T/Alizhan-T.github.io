@@ -2,12 +2,14 @@ import { useState } from "react";
 import { ArrowUpRight, Check, Copy, Mail, RotateCcw } from "lucide-react";
 import { CONTACT_LINKS } from "../../services/github";
 import { MODEL_CREDIT } from "../modelIntroConfig";
+import { useLang } from "../../i18n/LangContext";
 
 interface ContactSectionProps {
   onReplayIntro: () => void;
 }
 
 export function ContactSection({ onReplayIntro }: ContactSectionProps) {
+  const { t } = useLang();
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = async () => {
@@ -41,14 +43,12 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
         <div className="m5-card rounded-2xl p-5 sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-xl space-y-3">
-              <p className="font-mono text-xs text-[#38BDF8]">04. Contact</p>
+              <p className="font-mono text-xs text-[#38BDF8]">{t.contact.label}</p>
               <h2 className="font-display text-2xl font-bold tracking-tight text-white text-balance sm:text-4xl">
-                Let&apos;s build together
+                {t.contact.title}
               </h2>
               <p className="text-[15px] leading-7 text-slate-300">
-                Open to engineering opportunities across iOS (SwiftUI),
-                cross-platform mobile (Flutter), Full-Stack, Web3, AI/CV, and
-                interactive 3D/WebGL products.
+                {t.contact.text}
               </p>
             </div>
 
@@ -63,7 +63,7 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
                   {copied ? (
                     <>
                       <Check className="h-3.5 w-3.5 text-sky-200" aria-hidden="true" />
-                      <span>Copied: {CONTACT_LINKS.email}</span>
+                      <span>{t.contact.copied}: {CONTACT_LINKS.email}</span>
                     </>
                   ) : (
                     <>
@@ -107,13 +107,13 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
                   className="inline-flex min-h-[36px] items-center gap-1 transition-colors hover:text-[#38BDF8] sm:min-h-0"
                 >
                   <Mail className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>Mail</span>
+                  <span>{t.contact.mail}</span>
                 </a>
               </div>
             </div>
           </div>
 
-          <footer className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 font-mono text-xs text-slate-500">
+          <footer className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 font-mono text-xs text-slate-400">
             <span>© {new Date().getFullYear()} Alizhan Toleukhan</span>
             <div className="flex items-center gap-4">
               <button
@@ -122,15 +122,15 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
                 className="inline-flex items-center gap-1.5 text-slate-400 hover:text-[#38BDF8] md:hidden"
               >
                 <RotateCcw className="h-3 w-3 text-[#38BDF8]" aria-hidden="true" />
-                <span>Replay Intro</span>
+                <span>{t.nav.replay}</span>
               </button>
               <span className="hidden sm:inline">
-                BMW M5 F90 · Monte Carlo Blue · Astana, KZ
+                {t.contact.footerNote}
               </span>
             </div>
           </footer>
-          <p className="mt-3 font-mono text-xs leading-relaxed text-slate-600">
-            3D model “{MODEL_CREDIT.title}” by{" "}
+          <p className="mt-3 font-mono text-xs leading-relaxed text-slate-400">
+            {t.contact.modelLead} “{MODEL_CREDIT.title}” {t.contact.modelBy}{" "}
             <a href={MODEL_CREDIT.authorUrl} target="_blank" rel="noreferrer" className="underline hover:text-[#38BDF8]">
               {MODEL_CREDIT.author}
             </a>{" "}
@@ -138,7 +138,7 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
             <a href={MODEL_CREDIT.sourceUrl} target="_blank" rel="noreferrer" className="underline hover:text-[#38BDF8]">
               Sketchfab
             </a>
-            ), licensed under{" "}
+            ), {t.contact.modelUnder}{" "}
             <a href={MODEL_CREDIT.licenseUrl} target="_blank" rel="noreferrer" className="underline hover:text-[#38BDF8]">
               {MODEL_CREDIT.license}
             </a>

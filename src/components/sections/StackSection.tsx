@@ -3,12 +3,14 @@ import {
   useEffect,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent,
   type TouchEvent,
 } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TechIcon } from "./TechIcons";
+import { useLang } from "../../i18n/LangContext";
 import {
   DEFAULT_ACTIVE_STACK_INDEX,
   DESKTOP_ORBIT_CONFIG,
@@ -42,6 +44,8 @@ interface StackSectionProps {
 }
 
 export function StackSection(_props: StackSectionProps) {
+  const { t } = useLang();
+  const roleOf = (card: { id: string; role: string }) => t.stack.roles[card.id] ?? card.role;
   const sectionRef = useRef<HTMLElement | null>(null);
   const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const glareRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -304,6 +308,17 @@ export function StackSection(_props: StackSectionProps) {
     }
   }, []);
 
+  const handleStageKeyDown = useCallback(
+    (e: ReactKeyboardEvent<HTMLDivElement>) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      e.preventDefault();
+      const current = getFrontCardIndex(targetPhaseRef.current ?? phaseRef.current, CARD_COUNT);
+      focusCardByIndex(current + (e.key === "ArrowRight" ? 1 : -1));
+      setPausedBoth(true);
+    },
+    [focusCardByIndex, setPausedBoth],
+  );
+
   const activeCard = TECH_STACK_CARDS[frontIndex];
 
   return (
@@ -336,6 +351,7 @@ export function StackSection(_props: StackSectionProps) {
           {/* 3D Continuous Circular Orbit Stage */}
           <div
             onMouseLeave={handleStageMouseLeave}
+            onKeyDown={handleStageKeyDown}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -364,7 +380,6 @@ export function StackSection(_props: StackSectionProps) {
                   }}
                   type="button"
                   aria-pressed={isFront}
-                  aria-label={`${card.name} — ${card.role}`}
                   data-testid={`stack-card-${card.id}`}
                   data-active={isFront ? "true" : "false"}
                   onMouseEnter={() => handleCardMouseEnter(index)}
@@ -458,7 +473,7 @@ export function StackSection(_props: StackSectionProps) {
                         color: isFront ? card.borderHex : "#CBD5E1",
                       }}
                     >
-                      {card.role}
+                      {roleOf(card)}
                     </span>
                   </div>
                 </button>
@@ -469,7 +484,7 @@ export function StackSection(_props: StackSectionProps) {
           {/* Minimalist Orbit Controls (Prev / Active Tech Dash Indicators / Next) */}
           <div className="mt-2 flex items-center justify-center gap-4 sm:mt-4">
             <div
-              className="flex items-center gap-2"
+              className="flex items-center gap-0.5"
               role="group"
               aria-label="Select technology card"
             >
@@ -483,9 +498,9 @@ export function StackSection(_props: StackSectionProps) {
                       focusCardByIndex(idx);
                       setPausedBoth(true);
                     }}
-                    aria-label={`Focus ${card.name}`}
+                    aria-label={`${t.stack.focus} ${card.name}`}
                     aria-current={isFront ? "true" : undefined}
-                    className="flex h-6 items-center px-0.5 focus-visible:outline-2 focus-visible:outline-[#38BDF8]"
+                    className="flex h-6 min-w-6 items-center justify-center focus-visible:outline-2 focus-visible:outline-[#38BDF8]"
                   >
                     <span
                       aria-hidden="true"
@@ -508,9 +523,9 @@ export function StackSection(_props: StackSectionProps) {
           <p
             data-testid="stack-hint"
             aria-live="polite"
-            className="mt-3 font-mono text-xs tracking-wide text-slate-500"
+            className="mt-3 font-mono text-xs tracking-wide text-slate-400"
           >
-            {paused ? "Paused · click the card again to resume" : "Click a card to pause"}
+            {paused ? t.stack.hintPaused : t.stack.hintIdle}
           </p>
         </div>
       </div>
