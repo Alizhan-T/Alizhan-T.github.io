@@ -7,6 +7,7 @@ import {
   HEADLIGHT_MATERIAL_RE,
   MODEL_FRONT_AXIS,
   MODEL_INTRO_DURATION,
+  MODEL_LOAD_TIMEOUT_MS,
   MODEL_URL,
   REAR_LIGHT_MATERIAL_RE,
   type FrontAxis,
@@ -30,6 +31,7 @@ const FRONT_ROT: Record<FrontAxis, number> = {
 export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarModelIntroProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  const loaderTextRef = useRef<HTMLSpanElement | null>(null);
   const fadeOnce = useRef(false);
   const cbRef = useRef({ onBeginFade, onFail });
   cbRef.current = { onBeginFade, onFail };
@@ -66,23 +68,48 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         const front = (params.get("front") as FrontAxis) || MODEL_FRONT_AXIS;
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const mobile = window.innerWidth < 700;
+        const nav = navigator as Navigator & { deviceMemory?: number };
+        const weak = (nav.deviceMemory ?? 8) <= 4 || (navigator.hardwareConcurrency ?? 8) <= 4;
+        // quality tier: 2 = high, 1 = medium, 0 = low
+        let tier = reduced || (mobile && weak) ? 0 : mobile || weak ? 1 : 2;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-        const pr = Math.min(window.devicePixelRatio, mobile ? 1.5 : 2);
+        const pr = Math.min(window.devicePixelRatio, tier === 2 ? 2 : tier === 1 ? 1.5 : 1.15);
         renderer.setPixelRatio(pr);
         renderer.setSize(host.clientWidth, host.clientHeight);
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.0;
-        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.enabled = tier > 0;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         host.prepend(renderer.domElement);
         renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%";
+        renderer.domElement.addEventListener("webglcontextlost", (e) => {
+          e.preventDefault();
+          if (!disposed && !fadeOnce.current) cbRef.current.onFail();
+        });
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x04060a);
         scene.fog = new THREE.Fog(0x04060a, 10, 26);
         const camera = new THREE.PerspectiveCamera(32, host.clientWidth / host.clientHeight, 0.1, 80);
+
+        // --- Start downloading the model right away, in parallel with environment setup ---
+        const loader = new GLTFLoader();
+        const draco = new DRACOLoader();
+        draco.setDecoderPath(DRACO_PATH);
+        loader.setDRACOLoader(draco);
+        loader.setMeshoptDecoder(MeshoptDecoder);
+        const loadStart = performance.now();
+        const gltfPromise = Promise.race([
+          loader.loadAsync(MODEL_URL, (e) => {
+            if (e.lengthComputable && loaderTextRef.current) {
+              loaderTextRef.current.textContent = `LOADING ${Math.round((e.loaded / e.total) * 100)}%`;
+            }
+          }),
+          new Promise<never>((_, rej) => window.setTimeout(() => rej(new Error("model load timeout")), MODEL_LOAD_TIMEOUT_MS)),
+        ]);
+        gltfPromise.catch(() => {});
 
         // --- Environment (HDRI if provided, else built-in studio) ---
         const pmrem = new THREE.PMREMGenerator(renderer);
@@ -111,8 +138,8 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         // --- Lights ---
         const key = new THREE.SpotLight(0xcfe4ff, 0, 30, 0.5, 0.9, 1.4);
         key.position.set(-5, 7, 5);
-        key.castShadow = true;
-        key.shadow.mapSize.set(1024, 1024);
+        key.castShadow = tier > 0;
+        key.shadow.mapSize.set(tier === 2 ? 1024 : 512, tier === 2 ? 1024 : 512);
         key.shadow.radius = 8;
         key.shadow.bias = -0.0002;
         scene.add(key, key.target);
@@ -122,13 +149,9 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         rimR.position.set(-6, 3.5, -5);
         scene.add(rimL, rimL.target, rimR, rimR.target);
 
-        // --- Load model ---
-        const loader = new GLTFLoader();
-        const draco = new DRACOLoader();
-        draco.setDecoderPath(DRACO_PATH);
-        loader.setDRACOLoader(draco);
-        loader.setMeshoptDecoder(MeshoptDecoder);
-        const gltf = await loader.loadAsync(MODEL_URL);
+        // --- Wait for the model ---
+        const gltf = await gltfPromise;
+        void loadStart;
         if (disposed) return;
 
         // drop degenerate helper geometry
@@ -276,7 +299,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
           return lo;
         };
 
-        const N = reduced ? 20000 : mobile ? 38000 : 70000;
+        const N = tier === 0 ? 20000 : tier === 1 ? 38000 : 70000;
         const aStart = new Float32Array(N * 3), aTarget = new Float32Array(N * 3), aSeed = new Float32Array(N), aGlyph = new Float32Array(N);
         const q = new THREE.Vector3(), qa = new THREE.Vector3(), qb = new THREE.Vector3(), qc = new THREE.Vector3();
         for (let i = 0; i < N; i++) {
@@ -399,10 +422,10 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
           rimL.intensity = rimR.intensity = st.rim * 20;
           const glow = st.lights + st.flash;
           for (const m of headMats) m.emissiveIntensity = glow * 5;
-          for (const b of beams) b.intensity = st.lights * 12 + st.flash * 60;
+          for (const b of beams) b.intensity = st.lights * 8 + st.flash * 18;
           for (const f of flares) {
-            f.scale.setScalar(0.02 + st.flash * 1.5 + st.lights * 0.55);
-            (f.material as THREE.SpriteMaterial).opacity = Math.min(1, st.flash * 1.2 + st.lights);
+            f.scale.setScalar(0.02 + st.flash * 0.8 + st.lights * 0.28);
+            (f.material as THREE.SpriteMaterial).opacity = Math.min(1, st.flash * 0.9 + st.lights * 0.5);
           }
           for (const w of words) {
             const t = Math.min(1, Math.max(0, st.conv * 1.1));
@@ -444,8 +467,33 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
 
         let raf = 0;
         let last = performance.now();
+        // adaptive quality: watch frame times and step down when the device struggles
+        const noAdapt = params.has("t") || params.get("adapt") === "0";
+        let acc = 0, cnt = 0, started = performance.now();
+        const downgrade = () => {
+          tier = Math.max(0, tier - 1);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, tier === 1 ? 1.25 : 1));
+          renderer.setSize(host.clientWidth, host.clientHeight);
+          pMat.uniforms.uSize.value *= 1.15;
+          pGeo.setDrawRange(0, Math.floor(N * (tier === 1 ? 0.6 : 0.35)));
+          if (tier === 0) { key.castShadow = false; renderer.shadowMap.enabled = false; }
+        };
         const frame = (now: number) => {
-          apply(Math.min(0.05, (now - last) / 1000));
+          const rawDt = now - last;
+          if (rawDt < 500) { acc += rawDt; cnt++; }
+          if (cnt >= 40 && !noAdapt) {
+            const avg = acc / cnt;
+            acc = 0; cnt = 0;
+            if (avg > 45) {
+              if (tier > 0) downgrade();
+              else if (avg > 90 && performance.now() - started < 4500 && !fadeOnce.current) {
+                // hopeless device: hand over to the lightweight video intro
+                cbRef.current.onFail();
+                return;
+              }
+            }
+          }
+          apply(Math.min(0.05, rawDt / 1000));
           last = now;
           renderer.render(scene, camera);
           raf = requestAnimationFrame(frame);
@@ -507,7 +555,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center font-mono text-xs tracking-[0.35em] text-[#38BDF8]/70 transition-opacity duration-500"
       >
-        <span className="animate-pulse">LOADING</span>
+        <span ref={loaderTextRef} className="animate-pulse">LOADING</span>
       </div>
       <div ref={hostRef} className="absolute inset-0">
       </div>

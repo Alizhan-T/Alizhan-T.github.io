@@ -24,6 +24,9 @@ export type FrontAxis = "+z" | "-z" | "+x" | "-x";
 export const MODEL_FRONT_AXIS: FrontAxis = "+x";
 
 /** Полная длительность интро в секундах */
+/** If the model has not downloaded in this time, fall back to the video intro */
+export const MODEL_LOAD_TIMEOUT_MS = 12000;
+
 export const MODEL_INTRO_DURATION = 6.7;
 
 /** Имена материалов, которые считаются передней оптикой (подсвечиваются при включении) */
@@ -31,13 +34,27 @@ export const HEADLIGHT_MATERIAL_RE = /LightEmissive|head|lamp|drl|^material_95$/
 export const REAR_LIGHT_MATERIAL_RE = /tail|rear|brake|back/i;
 
 export async function isModelAvailable(url = MODEL_URL): Promise<boolean> {
+  // Data saver / very slow connections: use the lightweight video intro
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  if (conn?.saveData || conn?.effectiveType === "slow-2g" || conn?.effectiveType === "2g") return false;
+  // WebGL must be available
   try {
-    const res = await fetch(url, { method: "HEAD" });
+    const c = document.createElement("canvas");
+    if (!(c.getContext("webgl2") || c.getContext("webgl"))) return false;
+  } catch {
+    return false;
+  }
+  const ctrl = new AbortController();
+  const timer = window.setTimeout(() => ctrl.abort(), 4000);
+  try {
+    const res = await fetch(url, { method: "HEAD", signal: ctrl.signal });
     if (!res.ok) return false;
     const type = res.headers.get("content-type") ?? "";
     return !type.includes("text/html");
   } catch {
     return false;
+  } finally {
+    window.clearTimeout(timer);
   }
 }
 
