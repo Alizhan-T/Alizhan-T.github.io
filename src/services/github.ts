@@ -39,7 +39,7 @@ export interface GitHubPortfolioData {
   projects: PortfolioProject[];
 }
 
-const CACHE_KEY = "m5_f90_github_cache_v2";
+const CACHE_KEY = "m5_f90_github_cache_v3";
 const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
 
 const FALLBACK_REPOS: GitHubRepoRaw[] = [
@@ -260,12 +260,13 @@ export async function loadGitHubPortfolio(): Promise<GitHubPortfolioData> {
     const repos = (await reposRes.json()) as GitHubRepoRaw[];
     const parsedReadme = parseProfileReadme(readmeMd);
 
-    // Rank real repos; if user has fewer than 4 non-empty repos, supplement with featured entries
+    // Rank real repos; only pad with featured snapshot entries when GitHub returns fewer than 4,
+    // so live visitors never see cards that link to repositories that aren't public
     const liveProjects = rankAndFilterRepos(repos, GITHUB_USERNAME);
     const mergedProjects = [...liveProjects];
     const existingNames = new Set(liveProjects.map((p) => p.name.toLowerCase()));
     for (const fp of fallback.projects) {
-      if (mergedProjects.length >= 8) break;
+      if (mergedProjects.length >= 4) break;
       if (!existingNames.has(fp.name.toLowerCase()) && fp.featured) {
         mergedProjects.push(fp);
       }

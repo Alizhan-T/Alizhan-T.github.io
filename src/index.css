@@ -75,8 +75,25 @@ html.gpu-blur .m5-card {
 
 @media (min-width: 640px) {
   .m5-hero-scrim {
+    position: relative;
+    isolation: isolate;
     background: transparent;
     border-color: transparent;
+  }
+
+  /* Soft feathered shade behind the hero copy so the floating code never fights the headline */
+  .m5-hero-scrim::before {
+    content: "";
+    position: absolute;
+    inset: -20% -24% -20% -14%;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 60% 58% at 42% 50%,
+      rgba(4, 6, 10, 0.86) 0%,
+      rgba(4, 6, 10, 0.6) 48%,
+      rgba(4, 6, 10, 0) 100%
+    );
   }
 }
 

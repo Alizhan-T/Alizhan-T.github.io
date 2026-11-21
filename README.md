@@ -38,12 +38,12 @@ python scripts/model/encode_frames.py
 
 ## Интро-видео
 
-Интро (`public/videos/intro_code_sedan_1080p.mp4`) отрисовано кодом: сцена на Three.js лежит в `scripts/intro/scene.js` — вихрь частиц и символов кода, сборка в оригинальный седан без логотипов, вспышка фар, рывок мимо камеры. Чтобы перерендерить (нужны Python с Playwright, Google Chrome и FFmpeg):
+Интро (`public/videos/intro_code_gt_1080p.mp4`) отрисовано кодом: сцена на Three.js лежит в `scripts/intro/scene.js` — вихрь частиц и символов кода, сборка в оригинальный седан без логотипов (варианты кузова: `?car=gt|executive|fastback|sport`, по умолчанию gt), вспышка фар, рывок мимо камеры. Чтобы перерендерить (нужны Python с Playwright, Google Chrome и FFmpeg):
 
 ```sh
 npm ci
 python3 scripts/intro/render.py preview 1.0 2.5 3.5   # контрольные кадры в /tmp/intro_preview
-python3 scripts/intro/render.py full public/videos/intro_code_sedan_1080p.mp4
+python3 scripts/intro/render.py full public/videos/intro_code_gt_1080p.mp4
 ```
 
 Тайминг затухания оверлея задаётся в `src/components/introTiming.ts` (`INTRO_END_TIME`).
