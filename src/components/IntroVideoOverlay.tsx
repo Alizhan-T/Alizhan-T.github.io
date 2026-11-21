@@ -91,7 +91,7 @@ export function IntroVideoOverlay({
     <div
       data-testid="intro-video-overlay"
       data-intro-fading={fading ? "true" : "false"}
-      className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black transition-opacity duration-500 ease-out ${
+      className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#04060A] transition-opacity duration-500 ease-out ${
         fading ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
@@ -128,7 +128,7 @@ export function IntroVideoOverlay({
           type="button"
           onClick={requestFadeOnce}
           data-testid="skip-intro-btn"
-          className="fixed right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[60] inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-white/15 bg-black/80 px-4 py-2 font-mono text-xs tracking-wide text-slate-200 transition-colors hover:border-[#38BDF8]/60 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] sm:right-6 sm:bottom-6 sm:min-h-0 sm:px-3.5"
+          className="fixed right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[60] inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-white/15 bg-[#04060A]/80 px-4 py-2 font-mono text-xs tracking-wide text-slate-200 transition-colors hover:border-[#38BDF8]/60 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38BDF8] sm:right-6 sm:bottom-6 sm:min-h-0 sm:px-3.5"
         >
           <span>SKIP</span>
           <span className="hidden text-[#38BDF8] sm:inline">[ESC]</span>

@@ -104,8 +104,8 @@ html.gpu-blur .m5-bar {
 .m5-intro-vignette {
   background: radial-gradient(
     ellipse 92% 90% at 50% 50%,
-    rgba(0, 0, 0, 0) 84%,
-    rgba(0, 0, 0, 0.72) 100%
+    rgba(4, 6, 10, 0) 84%,
+    rgba(4, 6, 10, 0.72) 100%
   );
 }
 
