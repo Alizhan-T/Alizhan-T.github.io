@@ -8,7 +8,6 @@ import {
 } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TechIcon } from "./TechIcons";
 import {
   DEFAULT_ACTIVE_STACK_INDEX,
@@ -277,14 +276,6 @@ export function StackSection(_props: StackSectionProps) {
     }
   }, []);
 
-  const stepOrbit = useCallback((direction: -1 | 1) => {
-    const current = getFrontCardIndex(
-      targetPhaseRef.current ?? phaseRef.current,
-      CARD_COUNT,
-    );
-    focusCardByIndex(current + direction);
-  }, [focusCardByIndex]);
-
   const activeCard = TECH_STACK_CARDS[frontIndex];
 
   return (
@@ -451,15 +442,6 @@ export function StackSection(_props: StackSectionProps) {
 
           {/* Minimalist Orbit Controls (Prev / Active Tech Dash Indicators / Next) */}
           <div className="mt-2 flex items-center justify-center gap-4 sm:mt-4">
-            <button
-              type="button"
-              onClick={() => stepOrbit(-1)}
-              aria-label="Previous technology"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:border-[#38BDF8]/60 hover:text-white focus-visible:outline-2 focus-visible:outline-[#38BDF8]"
-            >
-              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-            </button>
-
             <div
               className="flex items-center gap-2"
               role="group"
@@ -494,14 +476,6 @@ export function StackSection(_props: StackSectionProps) {
               })}
             </div>
 
-            <button
-              type="button"
-              onClick={() => stepOrbit(1)}
-              aria-label="Next technology"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-300 transition-colors hover:border-[#38BDF8]/60 hover:text-white focus-visible:outline-2 focus-visible:outline-[#38BDF8]"
-            >
-              <ChevronRight className="h-4 w-4" aria-hidden="true" />
-            </button>
           </div>
         </div>
       </div>

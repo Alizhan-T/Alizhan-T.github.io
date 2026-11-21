@@ -26,6 +26,11 @@ try {
 } catch {
   // Optional 3D models folder (public/models/m5_f90.glb)
 }
+try {
+  await copyFile("dist/og.jpg", "og.jpg");
+} catch {
+  // Optional social preview image (public/og.jpg)
+}
 await copyFile("dist/index.html", "index.html.next");
 await rename("index.html.next", "index.html");
 

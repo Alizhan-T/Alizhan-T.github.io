@@ -7,6 +7,7 @@ import { RotateCcw } from "lucide-react";
 import { applyGpuSurfaceClass } from "./three/glCaps";
 import AmbientCodeParticles from "./three/AmbientCodeParticles";
 import { IntroOverlay } from "./components/IntroOverlay";
+import { ScrollProgress } from "./components/ScrollProgress";
 import {
   INTRO_FADE_DURATION_MS,
   INTRO_SEEN_STORAGE_KEY,
@@ -279,6 +280,8 @@ export default function App() {
 
         <ContactSection onReplayIntro={handleReplayIntro} />
       </main>
+
+      {introPhase === "done" && <ScrollProgress />}
 
       {/* Desktop Discreet "Replay Intro" Mini-Button (on mobile, lives cleanly inside Navbar menu & Contact footer) */}
       {introPhase === "done" && (

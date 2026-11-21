@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowUpRight, GitFork, Star } from "lucide-react";
 import type { PortfolioProject } from "../../services/githubParser";
+import { Reveal } from "../Reveal";
 
 type ProjectFilter = "All" | PortfolioProject["category"];
 
@@ -92,16 +93,22 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
           ) : (
             /* 2-Column Clean Minimalist Project Grid */
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {filtered.map((project) => (
+              {filtered.map((project, i) => (
+                <Reveal key={project.id} delay={(i % 2) * 90} className="h-full">
                 <article
-                  key={project.id}
-                  className="m5-card group flex flex-col justify-between rounded-2xl p-5 transition-colors hover:border-[#38BDF8]/45 sm:p-6"
+                  className="m5-card m5-project-card group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl p-5 transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-[#38BDF8]/45 hover:shadow-[0_18px_44px_rgba(0,82,165,0.22)] sm:p-6"
                 >
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#38BDF8]/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  />
                   <div className="space-y-3">
                     {/* Quiet unboxed metadata kicker (zero pill sandwiches) */}
                     <div className="flex items-center justify-between gap-3 font-mono text-xs text-slate-400 tabular-nums">
                       <span className="truncate">
-                        <span className="text-[#38BDF8]">{project.category}</span>
+                        <span className="text-[#38BDF8]">
+                          {project.category === "Mobile (iOS / Flutter)" ? "Mobile" : project.category}
+                        </span>
                         <span className="mx-1.5 text-slate-600" aria-hidden="true">
                           ·
                         </span>
@@ -164,6 +171,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                     </div>
                   </div>
                 </article>
+                </Reveal>
               ))}
             </div>
           )}
