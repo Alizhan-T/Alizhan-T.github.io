@@ -24,7 +24,7 @@ export type FrontAxis = "+z" | "-z" | "+x" | "-x";
 export const MODEL_FRONT_AXIS: FrontAxis = "+x";
 
 /** Полная длительность интро в секундах */
-export const MODEL_INTRO_DURATION = 8.2;
+export const MODEL_INTRO_DURATION = 6.7;
 
 /** Имена материалов, которые считаются передней оптикой (подсвечиваются при включении) */
 export const HEADLIGHT_MATERIAL_RE = /LightEmissive|head|lamp|drl|^material_95$/i;

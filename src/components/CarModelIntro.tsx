@@ -5,8 +5,6 @@ import {
   DRACO_PATH,
   HDRI_URL,
   HEADLIGHT_MATERIAL_RE,
-  INTRO_SUBTITLE,
-  INTRO_TITLE,
   MODEL_FRONT_AXIS,
   MODEL_INTRO_DURATION,
   MODEL_URL,
@@ -31,7 +29,6 @@ const FRONT_ROT: Record<FrontAxis, number> = {
 
 export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarModelIntroProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
-  const titleRef = useRef<HTMLDivElement | null>(null);
   const fadeOnce = useRef(false);
   const cbRef = useRef({ onBeginFade, onFail });
   cbRef.current = { onBeginFade, onFail };
@@ -394,6 +391,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
           pMat.uniforms.uCar.value = st.carZ;
           clip.constant = st.clip;
           car.position.z = st.carZ;
+          floor.visible = st.carZ < 9;
           scene.environmentIntensity = st.env;
           key.intensity = st.key * 40;
           rimL.intensity = rimR.intensity = st.rim * 20;
@@ -437,16 +435,9 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
           // 5) the car launches past the camera, leaving a trail of code
           .to(st, { carZ: 17, duration: 1.9 * k, ease: "power3.in" }, 4.75 * k)
           .to(rig, { lookZ: 4.5, duration: 1.7 * k, ease: "power2.in" }, 4.8 * k)
-          .to(st, { fade: 0, duration: 1.0 * k, ease: "power1.in" }, 5.2 * k)
+          .to(st, { fade: 0, duration: 0.9 * k, ease: "power1.in" }, 5.4 * k)
           .to(st, { lights: 0, flash: 0, key: 0.2, rim: 0.2, duration: 1.2 * k }, 5.9 * k)
           .to({}, { duration: 0.01 }, D);
-        const title = titleRef.current;
-        if (title) {
-          gsap.set(title, { opacity: 0, y: 14 });
-          tl.to(title, { opacity: 1, y: 0, duration: 0.9 * k, ease: "power2.out" }, 6.5 * k).to(
-            title, { opacity: 0, duration: 0.6 * k, ease: "power1.in" }, (MODEL_INTRO_DURATION - 0.7) * k,
-          );
-        }
         if (params.has("t")) tl.pause().progress(Number(params.get("t")));
 
         let raf = 0;
@@ -510,15 +501,6 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
       }`}
     >
       <div ref={hostRef} className="absolute inset-0">
-        <div
-          ref={titleRef}
-          className="pointer-events-none absolute inset-x-0 bottom-[7%] z-10 text-center opacity-0"
-        >
-          <h1 className="font-display text-4xl font-semibold tracking-[0.18em] text-white sm:text-6xl">
-            {INTRO_TITLE}
-          </h1>
-          <p className="mt-3 font-mono text-xs tracking-[0.3em] text-[#38BDF8] sm:text-sm">{INTRO_SUBTITLE}</p>
-        </div>
       </div>
       <div aria-hidden="true" className="m5-intro-vignette pointer-events-none absolute inset-0" />
       {!fading && (
