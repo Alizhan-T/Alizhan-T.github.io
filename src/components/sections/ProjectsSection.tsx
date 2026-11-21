@@ -135,14 +135,14 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                     </h3>
 
                     {/* Project Description */}
-                    <p className="text-sm leading-relaxed text-slate-300">
+                    <p className="text-[15px] leading-7 text-slate-300">
                       {project.description}
                     </p>
                   </div>
 
                   {/* Unboxed Tech Stack + Direct Links */}
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
-                    <p className="font-mono text-xs text-slate-400">
+                    <p className="font-mono text-[13px] leading-6 text-slate-400">
                       {project.tags.join(" · ")}
                     </p>
 

@@ -21,7 +21,7 @@ export function HeroSection({
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="m5-hero-scrim max-w-2xl space-y-5 rounded-2xl p-5 sm:space-y-6 sm:rounded-none sm:bg-transparent sm:p-0">
           {/* Quiet unboxed kicker metadata */}
-          <p className="font-mono text-[11px] leading-relaxed tracking-wide text-[#38BDF8] sm:text-xs">
+          <p className="font-mono text-xs leading-relaxed tracking-wide text-[#38BDF8] sm:text-[13px]">
             iOS, Full-Stack &amp; Web3 Engineer · Astana, KZ
           </p>
 
@@ -31,12 +31,12 @@ export function HeroSection({
           </h1>
 
           {/* Lead Copy */}
-          <p className="max-w-xl text-[15px] leading-relaxed text-slate-300 sm:text-lg">
+          <p className="max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
             {bio}
           </p>
 
           {/* Specification Note */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-slate-400 tabular-nums sm:gap-x-4 sm:text-xs">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-xs text-slate-400 tabular-nums sm:gap-x-4 sm:text-[13px]">
             <span>SwiftUI · Flutter · Python</span>
             <span aria-hidden="true" className="text-slate-600">
               ·

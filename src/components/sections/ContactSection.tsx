@@ -45,7 +45,7 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
               <h2 className="font-display text-2xl font-bold tracking-tight text-white text-balance sm:text-4xl">
                 Let&apos;s build together
               </h2>
-              <p className="text-sm leading-relaxed text-slate-300">
+              <p className="text-[15px] leading-7 text-slate-300">
                 Open to engineering opportunities across iOS (SwiftUI),
                 cross-platform mobile (Flutter), Full-Stack, Web3, AI/CV, and
                 interactive 3D/WebGL products.
@@ -113,7 +113,7 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
             </div>
           </div>
 
-          <footer className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 font-mono text-[11px] text-slate-500">
+          <footer className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 font-mono text-xs text-slate-500">
             <span>© {new Date().getFullYear()} Alizhan Toleukhan</span>
             <div className="flex items-center gap-4">
               <button
@@ -129,7 +129,7 @@ export function ContactSection({ onReplayIntro }: ContactSectionProps) {
               </span>
             </div>
           </footer>
-          <p className="mt-3 font-mono text-[10px] leading-relaxed text-slate-600">
+          <p className="mt-3 font-mono text-xs leading-relaxed text-slate-600">
             3D model “{MODEL_CREDIT.title}” by{" "}
             <a href={MODEL_CREDIT.authorUrl} target="_blank" rel="noreferrer" className="underline hover:text-[#38BDF8]">
               {MODEL_CREDIT.author}

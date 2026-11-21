@@ -45,7 +45,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
               )}
 
               <div className="min-w-0">
-                <p className="font-mono text-[11px] text-[#38BDF8] truncate sm:text-xs">
+                <p className="font-mono text-xs text-[#38BDF8] truncate sm:text-[13px]">
                   01. About · github.com/{profile.login}
                 </p>
                 <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-3xl">
@@ -67,7 +67,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
           </div>
 
           {/* Profile Bio & README Summary */}
-          <div className="space-y-3 text-sm leading-relaxed text-slate-300">
+          <div className="space-y-3.5 text-[15px] leading-7 text-slate-300">
             <p>{readme.summary || profile.bio}</p>
             <p className="font-mono text-xs text-slate-400">
               {profile.education} · {profile.location}
@@ -101,7 +101,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
             <h3 className="font-mono text-xs text-slate-400">
               Engineering Focus
             </h3>
-            <ul className="space-y-2 text-sm text-slate-300">
+            <ul className="space-y-2.5 text-[15px] leading-7 text-slate-300">
               {readme.highlights.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2.5">
                   <span
@@ -119,7 +119,7 @@ export function AboutSection({ data, loading }: AboutSectionProps) {
             <h3 className="font-mono text-xs text-[#38BDF8]">
               P2P Trading &amp; Crypto
             </h3>
-            <p className="text-sm leading-relaxed text-slate-300">
+            <p className="text-[15px] leading-7 text-slate-300">
               Hands-on experience in P2P crypto markets and USDT liquidity
               operations — focused on operational discipline, market analytics,
               and risk management.

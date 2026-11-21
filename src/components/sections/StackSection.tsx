@@ -52,7 +52,8 @@ export function StackSection(_props: StackSectionProps) {
   );
   const velocityRef = useRef<number>(AUTO_ORBIT_SPEED_RAD_PER_SEC);
   const targetPhaseRef = useRef<number | null>(null);
-  const isHoveringRef = useRef<boolean>(false);
+  const pausedRef = useRef<boolean>(false);
+  const [paused, setPaused] = useState(false);
   const hoveredCardRef = useRef<number | null>(null);
   const tiltRef = useRef<CardTilt>(NEUTRAL_TILT);
   const smoothTiltRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -151,10 +152,8 @@ export function StackSection(_props: StackSectionProps) {
           phaseRef.current += delta * Math.min(1, dt * 6.5);
         }
       } else if (!reducedMotion) {
-        // Smoothly brake to 0 when hovered, glide back to calm orbit speed when free
-        const desiredVelocity = isHoveringRef.current
-          ? 0
-          : AUTO_ORBIT_SPEED_RAD_PER_SEC;
+        // Brake to 0 while paused by a click, otherwise keep the calm orbit (hover never stops it)
+        const desiredVelocity = pausedRef.current ? 0 : AUTO_ORBIT_SPEED_RAD_PER_SEC;
         velocityRef.current +=
           (desiredVelocity - velocityRef.current) * Math.min(1, dt * 4.2);
 
@@ -196,25 +195,54 @@ export function StackSection(_props: StackSectionProps) {
     return () => ctx.revert();
   }, []);
 
+  const setPausedBoth = useCallback((value: boolean) => {
+    pausedRef.current = value;
+    setPaused(value);
+  }, []);
+
   const focusCardByIndex = useCallback((index: number) => {
     const wrapped = ((index % CARD_COUNT) + CARD_COUNT) % CARD_COUNT;
     targetPhaseRef.current = targetPhaseForIndex(wrapped, CARD_COUNT);
     velocityRef.current = 0;
   }, []);
 
-  const handleStageMouseEnter = useCallback(() => {
-    isHoveringRef.current = true;
-  }, []);
+  // Click a card: bring it to the front and stop the orbit. Click the pinned front card again to resume.
+  const handleCardClick = useCallback(
+    (index: number) => {
+      const isFrontNow = getFrontCardIndex(targetPhaseRef.current ?? phaseRef.current, CARD_COUNT) === index;
+      if (pausedRef.current && isFrontNow) {
+        setPausedBoth(false);
+        return;
+      }
+      focusCardByIndex(index);
+      setPausedBoth(true);
+    },
+    [focusCardByIndex, setPausedBoth],
+  );
+
+  // Clicking anywhere outside the stage, or pressing Escape, resumes the orbit
+  useEffect(() => {
+    const onDocClick = (e: globalThis.MouseEvent) => {
+      const stage = sectionRef.current?.querySelector('[data-testid="stack-coverflow-stage"]');
+      if (stage && e.target instanceof Node && !stage.contains(e.target)) setPausedBoth(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPausedBoth(false);
+    };
+    document.addEventListener("click", onDocClick);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("click", onDocClick);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [setPausedBoth]);
 
   const handleStageMouseLeave = useCallback(() => {
-    isHoveringRef.current = false;
     hoveredCardRef.current = null;
     tiltRef.current = NEUTRAL_TILT;
-    targetPhaseRef.current = null;
   }, []);
 
   const handleCardMouseEnter = useCallback((index: number) => {
-    isHoveringRef.current = true;
     hoveredCardRef.current = index;
     tiltRef.current = NEUTRAL_TILT;
   }, []);
@@ -307,7 +335,6 @@ export function StackSection(_props: StackSectionProps) {
 
           {/* 3D Continuous Circular Orbit Stage */}
           <div
-            onMouseEnter={handleStageMouseEnter}
             onMouseLeave={handleStageMouseLeave}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -343,8 +370,7 @@ export function StackSection(_props: StackSectionProps) {
                   onMouseEnter={() => handleCardMouseEnter(index)}
                   onMouseMove={(e) => handleCardMouseMove(index, e)}
                   onMouseLeave={handleCardMouseLeave}
-                  onClick={() => focusCardByIndex(index)}
-                  onFocus={() => focusCardByIndex(index)}
+                  onClick={() => handleCardClick(index)}
                   style={{
                     borderColor: isFront
                       ? `rgba(${card.glowRgb}, 0.85)`
@@ -453,7 +479,10 @@ export function StackSection(_props: StackSectionProps) {
                   <button
                     key={card.id}
                     type="button"
-                    onClick={() => focusCardByIndex(idx)}
+                    onClick={() => {
+                      focusCardByIndex(idx);
+                      setPausedBoth(true);
+                    }}
                     aria-label={`Focus ${card.name}`}
                     aria-current={isFront ? "true" : undefined}
                     className="flex h-6 items-center px-0.5 focus-visible:outline-2 focus-visible:outline-[#38BDF8]"
@@ -475,8 +504,14 @@ export function StackSection(_props: StackSectionProps) {
                 );
               })}
             </div>
-
           </div>
+          <p
+            data-testid="stack-hint"
+            aria-live="polite"
+            className="mt-3 font-mono text-xs tracking-wide text-slate-500"
+          >
+            {paused ? "Paused · click the card again to resume" : "Click a card to pause"}
+          </p>
         </div>
       </div>
     </section>
