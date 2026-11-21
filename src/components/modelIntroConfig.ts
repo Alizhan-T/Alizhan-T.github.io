@@ -5,7 +5,7 @@
  */
 export const MODEL_URL = "/models/m5_f90.glb";
 /** Необязательный HDRI (.hdr). Если файла нет — используется встроенная студия. */
-export const HDRI_URL = "/models/studio.hdr";
+export const HDRI_URL: string | null = null;
 /** Необязательная папка с Draco-декодером, если модель сжата Draco. */
 export const DRACO_PATH = "https://www.gstatic.com/draco/versioned/decoders/1.5.7/";
 
@@ -65,5 +65,5 @@ export const MODEL_CREDIT = {
   authorUrl: "https://sketchfab.com/Resinnnn",
   sourceUrl: "https://sketchfab.com/3d-models/bmw-m5-f90-5478e978bd634337adc8e3dc413fbfa3",
   license: "CC BY 4.0",
-  licenseUrl: "http://creativecommons.org/licenses/by/4.0/",
+  licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
 };

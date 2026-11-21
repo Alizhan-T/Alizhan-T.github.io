@@ -18,7 +18,7 @@ export function HeroSection({
   return (
     <section
       id="hero"
-      className="relative flex min-h-[100svh] items-center pt-24 pb-16 sm:pt-28 sm:pb-20"
+      className="relative flex min-h-[100svh] items-center overflow-x-clip pt-24 pb-16 sm:pt-28 sm:pb-20"
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="m5-hero-scrim max-w-2xl space-y-5 rounded-2xl p-5 sm:space-y-6 sm:rounded-none sm:bg-transparent sm:p-0">

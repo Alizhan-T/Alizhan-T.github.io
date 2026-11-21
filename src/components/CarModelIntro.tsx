@@ -119,6 +119,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         const pmrem = new THREE.PMREMGenerator(renderer);
         let envTex: THREE.Texture;
         try {
+          if (!HDRI_URL) throw new Error("no hdri");
           const hdr = await new RGBELoader().loadAsync(HDRI_URL);
           envTex = pmrem.fromEquirectangular(hdr).texture;
           hdr.dispose();
