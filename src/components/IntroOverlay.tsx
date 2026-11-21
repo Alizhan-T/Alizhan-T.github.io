@@ -24,7 +24,14 @@ export function IntroOverlay(props: IntroOverlayProps) {
   }, []);
 
   if (mode === "checking") {
-    return <div className="fixed inset-0 z-50 bg-[#04060A]" aria-hidden="true" />;
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-[#04060A] font-mono text-xs tracking-[0.35em] text-[#38BDF8]/70"
+        aria-hidden="true"
+      >
+        <span className="animate-pulse">LOADING</span>
+      </div>
+    );
   }
   if (mode === "model") {
     return <CarModelIntro {...props} onFail={() => setMode("video")} />;

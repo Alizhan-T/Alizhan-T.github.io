@@ -29,6 +29,7 @@ const FRONT_ROT: Record<FrontAxis, number> = {
 
 export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarModelIntroProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
+  const loaderRef = useRef<HTMLDivElement | null>(null);
   const fadeOnce = useRef(false);
   const cbRef = useRef({ onBeginFade, onFail });
   cbRef.current = { onBeginFade, onFail };
@@ -141,6 +142,7 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         });
         junk.forEach((o) => o.parent?.remove(o));
 
+        if (loaderRef.current) loaderRef.current.style.opacity = "0";
         const car = new THREE.Group();
         const model = gltf.scene;
         car.add(model);
@@ -500,6 +502,13 @@ export function CarModelIntro({ fading, replayKey, onBeginFade, onFail }: CarMod
         fading ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
+      <div
+        ref={loaderRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center font-mono text-xs tracking-[0.35em] text-[#38BDF8]/70 transition-opacity duration-500"
+      >
+        <span className="animate-pulse">LOADING</span>
+      </div>
       <div ref={hostRef} className="absolute inset-0">
       </div>
       <div aria-hidden="true" className="m5-intro-vignette pointer-events-none absolute inset-0" />

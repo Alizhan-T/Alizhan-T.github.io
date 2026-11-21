@@ -34,17 +34,8 @@ function resolveInitialIntroPhase(): IntroPhase {
     return "done";
   }
 
-  const reducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-  let seen = false;
-  try {
-    seen = window.sessionStorage.getItem(INTRO_SEEN_STORAGE_KEY) === "1";
-  } catch {
-    seen = false;
-  }
-
-  return reducedMotion || seen ? "done" : "playing";
+  // The intro plays automatically on every visit and refresh (use ?skipIntro=1 to bypass).
+  return "playing";
 }
 
 function markIntroSeen() {
